@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "321283554315",
+    "project_id": "line-up-d10b8",
+    "storage_bucket": "line-up-d10b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321283554315:android:c09912fda806d3f74c1b0e",
+        "android_client_info": {
+          "package_name": "com.example.line_up"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321283554315-57372ov2pj204i79pqjoi7ap9lvc37ip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzT-C4JypIOh8lQL1IsUWXN3OMf1x-_uE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321283554315-57372ov2pj204i79pqjoi7ap9lvc37ip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
