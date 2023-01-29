@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_up/handlers/utils.dart';
+import 'package:line_up/screens/posts.dart';
 
 import '../models/match.dart';
 import '../models/player.dart';
@@ -132,35 +133,63 @@ class _MainPlayerState extends State<MainPlayer> {
                                 )))
                             .toList()),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      const SizedBox(
-                        height: 70,
+                      Row(
+                        verticalDirection: VerticalDirection.up,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blueAccent.shade200,
+                              minimumSize: const Size(150, 40),
+                              // foreground
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Matches()),
+                              );
+                            },
+                            child: const Text(
+                              'Team Matches',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blueAccent.shade200,
+                              minimumSize: const Size(150, 40),
+                              // foreground
+                            ),
+                            onPressed: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Posts(
+                                          teamId: p?.teamId,
+                                          userName: p?.name,
+                                        )),
+                              );
+                            },
+                            child: const Text(
+                              'Team Posts',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        width: 190,
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blueAccent.shade200,
-                          minimumSize: const Size(150, 40),
-                          // foreground
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Matches()),
-                          );
-                        },
-                        child: const Text(
-                          'Team Matches',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                      ),
+                      SizedBox(
+                        height: 10,
+                      )
                     ],
                   )
                 ],
@@ -174,12 +203,16 @@ class _MainPlayerState extends State<MainPlayer> {
             }
           }));
 
-  Future<QuerySnapshot<Object?>>? read() async {
+  Future<Player> getPlayer() async {
     final docPlayer = FirebaseFirestore.instance
         .collection("player")
         .doc(FirebaseAuth.instance.currentUser!.uid);
     final snapshot = await docPlayer.get();
-    p = Player.fromJson(snapshot.data()!);
+    return Player.fromJson(snapshot.data()!);
+  }
+
+  Future<QuerySnapshot<Object?>>? read() async {
+    p = await getPlayer();
     final docTeam =
         FirebaseFirestore.instance.collection("team").doc(p?.teamId);
     final snapshotTeam = await docTeam.get();

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_up/screens/new_team.dart';
 import 'package:line_up/screens/players_by_team.dart';
+import 'package:line_up/screens/posts.dart';
 
 import '../models/coach.dart';
 
@@ -65,7 +66,14 @@ class _MainCoachState extends State<MainCoach> {
       BuildContext context, DocumentSnapshot<Object?> doc) {
     return GestureDetector(
       onTap: () {
-        buildShowDialog(context, doc);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PlayersByTeam(
+                  teamId: doc['id'],
+                  teamSchool: doc['school'],
+                  teamType: doc['type'])),
+        );
       },
       child: Card(
           child: ListTile(
@@ -74,18 +82,30 @@ class _MainCoachState extends State<MainCoach> {
               fontWeight: FontWeight.w600,
               fontSize: 30,
             )),
-        trailing: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PlayersByTeam(
-                      teamId: doc['id'],
-                      teamSchool: doc['school'],
-                      teamType: doc['type'])),
-            );
-          },
-          icon: const Icon(Icons.list_outlined),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () async {
+                final c = await getCoach();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Posts(
+                            teamId: doc['id'],
+                            userName: c.name,
+                          )),
+                );
+              },
+              icon: const Icon(Icons.post_add),
+            ),
+            IconButton(
+              onPressed: () {
+                buildShowDialog(context, doc);
+              },
+              icon: const Icon(Icons.qr_code_2_sharp),
+            ),
+          ],
         ),
         subtitle: Text(doc['type'],
             style: const TextStyle(
@@ -134,12 +154,21 @@ class _MainCoachState extends State<MainCoach> {
             ));
   }
 
-  Future<QuerySnapshot<Object?>>? read() async {
+  Future<Coach> getCoach() async {
     final docCoach = FirebaseFirestore.instance
         .collection("coach")
         .doc(FirebaseAuth.instance.currentUser!.uid);
     final snapshot = await docCoach.get();
-    final c = Coach.fromJson(snapshot.data()!);
+    return Coach.fromJson(snapshot.data()!);
+  }
+
+  Future<QuerySnapshot<Object?>>? read() async {
+    //final docCoach = FirebaseFirestore.instance
+    //    .collection("coach")
+    //    .doc(FirebaseAuth.instance.currentUser!.uid);
+    //final snapshot = await docCoach.get();
+    //final c = Coach.fromJson(snapshot.data()!);
+    final c = await getCoach();
     return await FirebaseFirestore.instance
         .collection('team')
         .where('coachId', isEqualTo: c.id)
