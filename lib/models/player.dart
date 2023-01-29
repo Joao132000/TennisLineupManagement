@@ -5,6 +5,7 @@ class Player {
   final String teamId;
   final double position;
   final bool challenge;
+  final String token;
 
   Player({
     this.id = '',
@@ -13,6 +14,7 @@ class Player {
     required this.teamId,
     required this.position,
     required this.challenge,
+    required this.token,
   });
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -21,6 +23,7 @@ class Player {
         'teamId': teamId,
         'position': position,
         'challenge': challenge,
+        'token': token,
       };
 
   static Player fromJson(Map<String, dynamic> json) => Player(
@@ -30,5 +33,6 @@ class Player {
         email: (json['email'] ?? '').toString(),
         teamId: (json['teamId'] ?? '').toString(),
         position: double.parse(json['position'].toString()),
+        token: (json['token'] ?? '').toString(),
       );
 }

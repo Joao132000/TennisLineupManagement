@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_up/handlers/utils.dart';
@@ -29,6 +30,12 @@ class _SignUpState extends State<SignUp> {
   final teamIdController = TextEditingController();
   final List<bool> coachOrPlayerList = <bool>[true, false];
   bool isCoach = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
 
   @override
   void dispose() {
@@ -180,6 +187,7 @@ class _SignUpState extends State<SignUp> {
           saveCoach();
           user.user?.updateDisplayName('1');
           wait();
+          requestPermission();
         } else {
           Utils.showSnackBar('Please check your password or team code');
         }
@@ -195,6 +203,7 @@ class _SignUpState extends State<SignUp> {
           savePlayer();
           user.user?.updateDisplayName('2');
           wait();
+          requestPermission();
         } else {
           Utils.showSnackBar('Please check your password or team code');
         }
@@ -217,6 +226,16 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
+  String myToken = '';
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        myToken = token!;
+        print('My token $myToken');
+      });
+    });
+  }
+
   Future saveCoach() async {
     final docCoach = FirebaseFirestore.instance
         .collection('coach')
@@ -225,6 +244,7 @@ class _SignUpState extends State<SignUp> {
       id: FirebaseAuth.instance.currentUser!.uid,
       name: nameController.text,
       email: emailController.text,
+      token: myToken,
     );
     final json = coach.toJson();
     await docCoach.set(json);
@@ -241,9 +261,28 @@ class _SignUpState extends State<SignUp> {
       teamId: teamIdController.text,
       position: 00,
       challenge: false,
+      token: myToken,
     );
     final json = player.toJson();
     await docPlayer.set(json);
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('ok');
+    } else {
+      print('Ops');
+    }
   }
 
   void toggleButton(int index) {
