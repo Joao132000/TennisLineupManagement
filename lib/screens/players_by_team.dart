@@ -5,13 +5,13 @@ import 'matches_coach.dart';
 
 class PlayersByTeam extends StatefulWidget {
   final String teamId;
-  final String teamUniversity;
+  final String teamSchool;
   final String teamType;
 
   const PlayersByTeam(
       {Key? key,
       required this.teamId,
-      required this.teamUniversity,
+      required this.teamSchool,
       required this.teamType})
       : super(key: key);
 
@@ -43,7 +43,7 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(widget.teamUniversity,
+                  Text(widget.teamSchool,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 30,

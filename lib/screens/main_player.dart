@@ -185,7 +185,7 @@ class _MainPlayerState extends State<MainPlayer> {
     final snapshotTeam = await docTeam.get();
     final t = Team.fromJson(snapshotTeam.data()!);
     type = t.type;
-    university = t.university;
+    university = t.school;
     return await FirebaseFirestore.instance
         .collection('player')
         .orderBy('position')

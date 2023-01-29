@@ -21,6 +21,7 @@ class _MatchesState extends State<Matches> {
   String? month;
   final resultController = TextEditingController();
   String? radioButton;
+  final currentUser = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void dispose() {
@@ -109,12 +110,18 @@ class _MatchesState extends State<Matches> {
               fontWeight: FontWeight.w300,
               fontSize: 20,
             )),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            buildIconButtonDate(context, doc),
-            buildIconButtonResult(context, doc),
-          ],
+        trailing: Visibility(
+          visible: ((currentUser == doc['player1id']) ||
+                  (currentUser == doc['player2id']))
+              ? true
+              : false,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildIconButtonDate(context, doc),
+              buildIconButtonResult(context, doc),
+            ],
+          ),
         ),
       )),
     );

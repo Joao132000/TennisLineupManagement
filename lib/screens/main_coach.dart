@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:line_up/screens/new_team.dart';
 import 'package:line_up/screens/players_by_team.dart';
 
@@ -68,7 +69,7 @@ class _MainCoachState extends State<MainCoach> {
       },
       child: Card(
           child: ListTile(
-        title: Text(doc['university'],
+        title: Text(doc['school'],
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 30,
@@ -80,7 +81,7 @@ class _MainCoachState extends State<MainCoach> {
               MaterialPageRoute(
                   builder: (context) => PlayersByTeam(
                       teamId: doc['id'],
-                      teamUniversity: doc['university'],
+                      teamSchool: doc['school'],
                       teamType: doc['type'])),
             );
           },
@@ -113,7 +114,18 @@ class _MainCoachState extends State<MainCoach> {
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('OK',
+                    child: const Text('Close',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 25,
+                        ))),
+                TextButton(
+                    onPressed: () {
+                      final value = ClipboardData(text: doc['id']);
+                      Clipboard.setData(value);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Copy',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 25,
