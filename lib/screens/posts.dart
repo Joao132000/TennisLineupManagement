@@ -63,7 +63,7 @@ class _PostsState extends State<Posts> {
               return Column(
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 5,
                   ),
                   Container(
                     padding:
@@ -79,7 +79,7 @@ class _PostsState extends State<Posts> {
                           color: Colors.blueGrey,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
-                    margin: EdgeInsets.all(5),
+                    //margin: EdgeInsets.all(5),
                     padding: const EdgeInsets.all(10),
                     alignment: Alignment.topLeft,
                     child: Text(post.description,

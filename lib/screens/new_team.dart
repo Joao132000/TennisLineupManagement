@@ -17,7 +17,7 @@ class NewTeam extends StatefulWidget {
 class _NewTeamState extends State<NewTeam> {
   final schoolController = TextEditingController();
   final leagueController = TextEditingController();
-  String type = 'Men Tennis Team';
+  String type = "Men's Team";
 
   @override
   void dispose() {
@@ -26,14 +26,14 @@ class _NewTeamState extends State<NewTeam> {
     super.dispose();
   }
 
-  String dropdownvalue = "Men's Tennis Team";
+  String dropdownvalue = "Men's Team";
 
   // List of items in our dropdown menu
   var items = [
-    "Men's Tennis Team",
-    "Women's Tennis Team",
-    "Boy's Tennis Team",
-    "Girl's Tennis Team",
+    "Men's Team",
+    "Women's Team",
+    "Boy's Team",
+    "Girl's Team",
     "Men's Senior",
     "Women's Senior",
     'Overall',

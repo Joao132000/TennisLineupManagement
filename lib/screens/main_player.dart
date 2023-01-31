@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_up/handlers/utils.dart';
+import 'package:line_up/screens/doubles_player_view.dart';
 import 'package:line_up/screens/posts.dart';
 
 import '../handlers/signin_signout.dart';
@@ -150,41 +151,58 @@ class _MainPlayerState extends State<MainPlayer> {
           )
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () {
-          return Future(() {
-            setState(() {});
-          });
+      body: GestureDetector(
+        onPanUpdate: (details) {
+          if (details.delta.dx < 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DoublesPlayerView(
+                  teamId: p!.teamId,
+                  teamSchool: university!,
+                  teamType: type!,
+                  teamLeague: league!,
+                ),
+              ),
+            );
+          }
         },
-        child: FutureBuilder<QuerySnapshot>(
-            future: read(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                return Column(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(university!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 25,
-                        )),
-                    Text('${type!}\n${league!}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      child: ListView(
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future(() {
+              setState(() {});
+            });
+          },
+          child: FutureBuilder<QuerySnapshot>(
+              future: read(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(university!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 25,
+                          )),
+                      Text('${type!}\n${league!}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: ListView(
                           children: documents
-                              .map((doc) => Card(
-                                      child: ListTile(
+                              .map(
+                                (doc) => Card(
+                                  child: ListTile(
                                     leading: CircleAvatar(
                                       child: Text(
                                         doc['position'].toString(),
@@ -255,78 +273,99 @@ class _MainPlayerState extends State<MainPlayer> {
                                       icon: const Icon(
                                           Icons.sports_tennis_outlined),
                                     ),
-                                  )))
-                              .toList()),
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          verticalDirection: VerticalDirection.up,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.blueAccent.shade200,
-                                minimumSize: const Size(150, 40),
-                                // foreground
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Matches()),
-                                );
-                              },
-                              child: const Text(
-                                'Team Matches',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.blueAccent.shade200,
-                                minimumSize: const Size(150, 40),
-                                // foreground
-                              ),
-                              onPressed: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Posts(
-                                            teamId: p?.teamId,
-                                            userName: p?.name,
-                                          )),
-                                );
-                              },
-                              child: const Text(
-                                'Team Posts',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                            ),
-                          ],
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ],
-                    )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return const Text('Its Error!');
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Swipe to see doubles lineup -->',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            verticalDirection: VerticalDirection.up,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blueAccent.shade200,
+                                  minimumSize: const Size(150, 40),
+                                  // foreground
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Matches()),
+                                  );
+                                },
+                                child: const Text(
+                                  'Team Matches',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blueAccent.shade200,
+                                  minimumSize: const Size(150, 40),
+                                  // foreground
+                                ),
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Posts(
+                                              teamId: p?.teamId,
+                                              userName: p?.name,
+                                            )),
+                                  );
+                                },
+                                child: const Text(
+                                  'Team Posts',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
+                      )
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return const Text('Its Error!');
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ),
       ));
 
   Future<Player> getPlayer() async {
