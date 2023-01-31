@@ -85,6 +85,21 @@ class _PostsState extends State<Posts> {
                     child: Text(post.description,
                         style: Theme.of(context).textTheme.headline6),
                   ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      '${post.timeStamp.toDate().month.toString()}/'
+                      '${post.timeStamp.toDate().day.toString()}/'
+                      '${post.timeStamp.toDate().year.toString()}  '
+                      '${post.timeStamp.toDate().hour.toString()}:'
+                      '${post.timeStamp.toDate().minute.toString()}',
+                      style: TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
                 ],
               );
             },

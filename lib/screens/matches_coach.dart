@@ -16,39 +16,47 @@ class _MatchesCoachState extends State<MatchesCoach> {
       appBar: AppBar(
         title: const Text('Team Matches'),
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: read(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final List<DocumentSnapshot> documents = snapshot.data!.docs;
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text('Matches',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                      child: ListView(
-                          children: documents
-                              .map((doc) => buildGestureDetector(context, doc))
-                              .toList())),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return const Text('Something went wrong!');
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }));
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future(() {
+            setState(() {});
+          });
+        },
+        child: FutureBuilder<QuerySnapshot>(
+            future: read(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text('Matches',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                        child: ListView(
+                            children: documents
+                                .map(
+                                    (doc) => buildGestureDetector(context, doc))
+                                .toList())),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return const Text('Something went wrong!');
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
+      ));
 
   GestureDetector buildGestureDetector(
       BuildContext context, DocumentSnapshot<Object?> doc) {

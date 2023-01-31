@@ -34,39 +34,47 @@ class _MatchesState extends State<Matches> {
       appBar: AppBar(
         title: const Text('Team Matches'),
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: read(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final List<DocumentSnapshot> documents = snapshot.data!.docs;
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text('Matches',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                      child: ListView(
-                          children: documents
-                              .map((doc) => buildGestureDetector(context, doc))
-                              .toList())),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return const Text('Something went wrong!');
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }));
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future(() {
+            setState(() {});
+          });
+        },
+        child: FutureBuilder<QuerySnapshot>(
+            future: read(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text('Matches',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                        child: ListView(
+                            children: documents
+                                .map(
+                                    (doc) => buildGestureDetector(context, doc))
+                                .toList())),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return const Text('Something went wrong!');
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
+      ));
 
   GestureDetector buildGestureDetector(
       BuildContext context, DocumentSnapshot<Object?> doc) {
@@ -98,33 +106,113 @@ class _MatchesState extends State<Matches> {
                 ));
       },
       child: Card(
+          color: ((doc['result']) != "No result yet") ? Colors.green : null,
           child: ListTile(
-        title: Text(
-            '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 30,
-            )),
-        subtitle: Text(doc['date'],
-            style: const TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: 20,
-            )),
-        trailing: Visibility(
-          visible: ((currentUser == doc['player1id']) ||
-                  (currentUser == doc['player2id']))
-              ? true
-              : false,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              buildIconButtonDate(context, doc),
-              buildIconButtonResult(context, doc),
-            ],
-          ),
-        ),
-      )),
+            title: Text(
+                '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 25,
+                )),
+            subtitle: Text(doc['date'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                )),
+            trailing: Visibility(
+              visible: (((currentUser == doc['player1id']) ||
+                          (currentUser == doc['player2id'])) &&
+                      (doc['result'] == 'No result yet'))
+                  ? true
+                  : false,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildIconButtonDate(context, doc),
+                  buildIconButtonResult(context, doc),
+                  buildIconButtonDelete(context, doc),
+                ],
+              ),
+            ),
+          )),
     );
+  }
+
+  IconButton buildIconButtonDelete(
+      BuildContext context, DocumentSnapshot<Object?> doc) {
+    return IconButton(
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text(
+                    'Are you sure you want to delete this match?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    Row(
+                      children: [
+                        TextButton(
+                          child: const Text(
+                            'Confirm',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () {
+                            final deleteDoc = FirebaseFirestore.instance
+                                .collection('match')
+                                .doc(doc['id']);
+                            setState(() {
+                              deleteDoc.delete();
+                            });
+                            Navigator.pop(context);
+                            updateChallenge(doc);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignInSignOut(),
+                              ),
+                            );
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ));
+      },
+      icon: const Icon(Icons.delete),
+    );
+  }
+
+  void updateChallenge(DocumentSnapshot<Object?> doc) {
+    final updateDocPlayer1 =
+        FirebaseFirestore.instance.collection('player').doc(doc['player1id']);
+    final updateDocPlayer2 =
+        FirebaseFirestore.instance.collection('player').doc(doc['player2id']);
+    setState(() {
+      updateDocPlayer1.update({
+        'challenge': false,
+      });
+      updateDocPlayer2.update({
+        'challenge': false,
+      });
+    });
   }
 
   IconButton buildIconButtonResult(
@@ -132,124 +220,135 @@ class _MatchesState extends State<Matches> {
     return IconButton(
       onPressed: () {
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  content: StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text(doc['player1name']),
-                            leading: Radio(
-                              value: 'player1',
-                              groupValue: radioButton,
-                              onChanged: (value) {
-                                setState(() {
-                                  radioButton = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            title: Text(doc['player2name']),
-                            leading: Radio(
-                              value: 'player2',
-                              groupValue: radioButton,
-                              onChanged: (value) {
-                                setState(() {
-                                  radioButton = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                          TextField(
-                            controller: resultController,
-                            textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                                labelText: 'Match Result'),
-                          ),
-                        ],
+          context: context,
+          builder: (context) => AlertDialog(
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text(doc['player1name']),
+                      leading: Radio(
+                        value: 'player1',
+                        groupValue: radioButton,
+                        onChanged: (value) {
+                          setState(() {
+                            radioButton = value.toString();
+                          });
+                        },
                       ),
-                    );
-                  }),
-                  title: const Text('Match Result:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20,
-                      )),
-                  actions: [
-                    Row(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              final updateDocPlayer1 = FirebaseFirestore
-                                  .instance
-                                  .collection('player')
-                                  .doc(doc['player1id']);
-                              final updateDocPlayer2 = FirebaseFirestore
-                                  .instance
-                                  .collection('player')
-                                  .doc(doc['player2id']);
-                              setState(() {
-                                updateDocPlayer1.update({
-                                  'challenge': false,
-                                });
-                                updateDocPlayer2.update({
-                                  'challenge': false,
-                                });
-                              });
-                              final updateDoc = FirebaseFirestore.instance
-                                  .collection('match')
-                                  .doc(doc['id']);
-                              setState(() {
-                                updateDoc.update({
-                                  'result': resultController.text,
-                                });
-                              });
-                              if (radioButton == 'player1') {
-                                setState(() {
-                                  updateDocPlayer1.update({
-                                    'position': doc['player2position'],
-                                  });
-                                  updateDocPlayer2.update({
-                                    'position':
-                                        (doc['player1position']).toInt(),
-                                  });
-                                  updateDoc.update({
-                                    'winner': doc['player1name'],
-                                  });
-                                });
-                              } else {
-                                setState(() {
-                                  updateDoc.update({
-                                    'winner': doc['player2name'],
-                                  });
-                                });
-                              }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SignInSignOut()),
-                              );
-                            },
-                            child: const Text('Confirm',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ))),
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ))),
-                      ],
+                    ),
+                    ListTile(
+                      title: Text(doc['player2name']),
+                      leading: Radio(
+                        value: 'player2',
+                        groupValue: radioButton,
+                        onChanged: (value) {
+                          setState(() {
+                            radioButton = value.toString();
+                          });
+                        },
+                      ),
+                    ),
+                    TextField(
+                      controller: resultController,
+                      textInputAction: TextInputAction.next,
+                      decoration:
+                          const InputDecoration(labelText: 'Match Result'),
                     ),
                   ],
-                ));
+                ),
+              );
+            }),
+            title: const Text('Match Result:',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                )),
+            actions: [
+              Row(
+                children: [
+                  TextButton(
+                      child: const Text(
+                        'Confirm',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                      ),
+                      onPressed: () {
+                        if ((resultController.text != "") &&
+                            (radioButton != "")) {
+                          final updateDocPlayer1 = FirebaseFirestore.instance
+                              .collection('player')
+                              .doc(doc['player1id']);
+                          final updateDocPlayer2 = FirebaseFirestore.instance
+                              .collection('player')
+                              .doc(doc['player2id']);
+                          setState(() {
+                            updateDocPlayer1.update({
+                              'challenge': false,
+                            });
+                            updateDocPlayer2.update({
+                              'challenge': false,
+                            });
+                          });
+                          final updateDoc = FirebaseFirestore.instance
+                              .collection('match')
+                              .doc(doc['id']);
+                          setState(() {
+                            updateDoc.update({
+                              'result': resultController.text,
+                            });
+                          });
+                          if (radioButton == 'player1') {
+                            setState(() {
+                              updateDocPlayer1.update({
+                                'position': doc['player2position'],
+                              });
+                              updateDocPlayer2.update({
+                                'position': (doc['player1position']).toInt(),
+                              });
+                              updateDoc.update({
+                                'winner': doc['player1name'],
+                              });
+                            });
+                          } else {
+                            setState(() {
+                              updateDoc.update({
+                                'winner': doc['player2name'],
+                              });
+                            });
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignInSignOut(),
+                            ),
+                          );
+                        } else {
+                          showDialog(
+                            context: (context),
+                            builder: (context) => AlertDialog(
+                              title: Text('Please enter match result'),
+                              titlePadding: EdgeInsets.all(10),
+                            ),
+                          );
+                        }
+                      }),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ))),
+                ],
+              ),
+            ],
+          ),
+        );
       },
       icon: const Icon(Icons.scoreboard_outlined),
     );

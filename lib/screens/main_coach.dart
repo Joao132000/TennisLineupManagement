@@ -16,11 +16,13 @@ class MainCoach extends StatefulWidget {
 }
 
 class _MainCoachState extends State<MainCoach> {
+  Coach? coach;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teams'),
+        title: Text('Teams'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -80,7 +82,7 @@ class _MainCoachState extends State<MainCoach> {
         title: Text(doc['school'],
             style: const TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 30,
+              fontSize: 25,
             )),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -107,7 +109,7 @@ class _MainCoachState extends State<MainCoach> {
             ),
           ],
         ),
-        subtitle: Text(doc['type'],
+        subtitle: Text('${doc['type']}\n${doc['league']}',
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 20,
@@ -163,15 +165,10 @@ class _MainCoachState extends State<MainCoach> {
   }
 
   Future<QuerySnapshot<Object?>>? read() async {
-    //final docCoach = FirebaseFirestore.instance
-    //    .collection("coach")
-    //    .doc(FirebaseAuth.instance.currentUser!.uid);
-    //final snapshot = await docCoach.get();
-    //final c = Coach.fromJson(snapshot.data()!);
-    final c = await getCoach();
+    coach = await getCoach();
     return await FirebaseFirestore.instance
         .collection('team')
-        .where('coachId', isEqualTo: c.id)
+        .where('coachId', isEqualTo: coach?.id)
         .get();
   }
 }

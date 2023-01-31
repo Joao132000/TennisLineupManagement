@@ -89,7 +89,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
             const Text(
-              'Would you like to register as a coach or player?',
+              'Would you like to register as a player or coach/admin?',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -108,7 +108,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   Text(
-                    'Coach',
+                    'Coach/Admin',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -117,8 +117,8 @@ class _SignUpState extends State<SignUp> {
                 ],
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 constraints: const BoxConstraints(
-                  minHeight: 50.0,
-                  minWidth: 100.0,
+                  minHeight: 55.0,
+                  minWidth: 160.0,
                 ),
                 onPressed: (int index) => toggleButton(index),
                 isSelected: coachOrPlayerList),
@@ -156,7 +156,10 @@ class _SignUpState extends State<SignUp> {
                       style: const TextStyle(
                           decoration: TextDecoration.underline,
                           color: Colors.blue))
-                ]))
+                ])),
+            SizedBox(
+              height: 30,
+            )
           ],
         ),
       );
@@ -177,36 +180,40 @@ class _SignUpState extends State<SignUp> {
 
   Future signUpButton() async {
     try {
-      if (isCoach) {
-        if (passwordController1.text == passwordController2.text) {
-          final user =
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController1.text.trim(),
-          );
-          saveCoach();
-          user.user?.updateDisplayName('1');
-          wait();
-          requestPermission();
+      if (nameController.text != "") {
+        if (isCoach) {
+          if (passwordController1.text == passwordController2.text) {
+            final user =
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController1.text.trim(),
+            );
+            saveCoach();
+            user.user?.updateDisplayName('1');
+            wait();
+            requestPermission();
+          } else {
+            Utils.showSnackBar('Please check your password or team code');
+          }
         } else {
-          Utils.showSnackBar('Please check your password or team code');
+          await checkTeamFunc();
+          if ((passwordController1.text == passwordController2.text) &&
+              (checkTeam == true)) {
+            final user =
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController1.text.trim(),
+            );
+            savePlayer();
+            user.user?.updateDisplayName('2');
+            wait();
+            requestPermission();
+          } else {
+            Utils.showSnackBar('Please check your password or team code');
+          }
         }
       } else {
-        await checkTeamFunc();
-        if ((passwordController1.text == passwordController2.text) &&
-            (checkTeam == true)) {
-          final user =
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController1.text.trim(),
-          );
-          savePlayer();
-          user.user?.updateDisplayName('2');
-          wait();
-          requestPermission();
-        } else {
-          Utils.showSnackBar('Please check your password or team code');
-        }
+        Utils.showSnackBar('Please enter a name!');
       }
     } on FirebaseAuthException catch (e) {
       Utils.showSnackBar(e.message);
@@ -215,12 +222,16 @@ class _SignUpState extends State<SignUp> {
 
   bool checkTeam = false;
   Future checkTeamFunc() async {
-    final docTeam = FirebaseFirestore.instance
-        .collection("team")
-        .doc(teamIdController.text);
-    final snapshot = await docTeam.get();
-    if (snapshot.exists) {
-      checkTeam = true;
+    if (teamIdController.text != "") {
+      final docTeam = FirebaseFirestore.instance
+          .collection("team")
+          .doc(teamIdController.text);
+      final snapshot = await docTeam.get();
+      if (snapshot.exists) {
+        checkTeam = true;
+      } else {
+        checkTeam = false;
+      }
     } else {
       checkTeam = false;
     }

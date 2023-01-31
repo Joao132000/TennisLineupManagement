@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:line_up/screens/forgot_password.dart';
 
 import '../handlers/utils.dart';
 
@@ -73,6 +74,22 @@ class _SignInState extends State<SignIn> {
             ),
             const SizedBox(
               height: 30,
+            ),
+            GestureDetector(
+              child: Text('Forgot Password?',
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                    fontSize: 20,
+                  )),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ForgotPassword(),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             RichText(
                 text: TextSpan(

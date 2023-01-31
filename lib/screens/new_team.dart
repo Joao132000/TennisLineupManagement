@@ -34,6 +34,9 @@ class _NewTeamState extends State<NewTeam> {
     'Women Tennis Team',
     'Boys Tennis Team',
     'Girls Tennis Team',
+    'Men Senior',
+    'Women Senior',
+    'Overall',
   ];
 
   @override
@@ -59,7 +62,8 @@ class _NewTeamState extends State<NewTeam> {
               TextField(
                 controller: schoolController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'School'),
+                decoration:
+                    const InputDecoration(labelText: 'School/Organization'),
               ),
               const SizedBox(height: 5),
               TextField(

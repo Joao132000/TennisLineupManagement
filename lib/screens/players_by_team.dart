@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../handlers/signin_signout.dart';
 import 'matches_coach.dart';
 
 class PlayersByTeam extends StatefulWidget {
@@ -21,10 +22,12 @@ class PlayersByTeam extends StatefulWidget {
 
 class _PlayersByTeamState extends State<PlayersByTeam> {
   final positionController = TextEditingController();
+  final newTeamCodeController = TextEditingController();
 
   @override
   void dispose() {
     positionController.dispose();
+    newTeamCodeController.dispose();
     super.dispose();
   }
 
@@ -33,74 +36,81 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
       appBar: AppBar(
         title: const Text('Team Lineup'),
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: read(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final List<DocumentSnapshot> documents = snapshot.data!.docs;
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(widget.teamSchool,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
-                  Text(widget.teamType,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                    child: buildListView(documents, context),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        height: 70,
-                      ),
-                      const SizedBox(
-                        width: 190,
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blueAccent.shade200,
-                          minimumSize: const Size(150, 40),
-                          // foreground
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future(() {
+            setState(() {});
+          });
+        },
+        child: FutureBuilder<QuerySnapshot>(
+            future: read(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(widget.teamSchool,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                    Text(widget.teamType,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 25,
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                      child: buildListView(documents, context),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 70,
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MatchesCoach(teamId: widget.teamId)),
-                          );
-                        },
-                        child: const Text(
-                          'Team Matches',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                        const SizedBox(
+                          width: 190,
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return const Text('Its Error!');
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }));
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blueAccent.shade200,
+                            minimumSize: const Size(150, 40),
+                            // foreground
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MatchesCoach(teamId: widget.teamId)),
+                            );
+                          },
+                          child: const Text(
+                            'Team Matches',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return const Text('Its Error!');
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
+      ));
 
   ListView buildListView(
       List<DocumentSnapshot<Object?>> documents, BuildContext context) {
@@ -134,8 +144,104 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
       children: [
         buildIconButtonUpdate(context, doc),
         buildIconButtonDelete(context, doc),
+        IconButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text(
+                        'Move ${doc['name']} to a new team',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      content: TextField(
+                        controller: newTeamCodeController,
+                        textInputAction: TextInputAction.done,
+                        decoration:
+                            const InputDecoration(labelText: 'New Team Code'),
+                      ),
+                      actions: [
+                        Row(
+                          children: [
+                            TextButton(
+                              child: const Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              onPressed: () async {
+                                await checkTeamFunc();
+                                if (checkTeam) {
+                                  final updateDoc = FirebaseFirestore.instance
+                                      .collection('player')
+                                      .doc(doc['id']);
+                                  setState(() {
+                                    updateDoc.update({
+                                      'teamId': newTeamCodeController.text,
+                                      'position': 0,
+                                      'challenge': false,
+                                    });
+                                  });
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignInSignOut(),
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: (context),
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Please enter a valid code'),
+                                      titlePadding: EdgeInsets.all(10),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ));
+          },
+          icon: const Icon(Icons.qr_code_2_sharp),
+        ),
       ],
     );
+  }
+
+  bool checkTeam = false;
+  Future checkTeamFunc() async {
+    if (newTeamCodeController.text != "") {
+      final docTeam = FirebaseFirestore.instance
+          .collection("team")
+          .doc(newTeamCodeController.text);
+      final snapshot = await docTeam.get();
+      if (snapshot.exists) {
+        checkTeam = true;
+      } else {
+        checkTeam = false;
+      }
+    } else {
+      checkTeam = false;
+    }
   }
 
   IconButton buildIconButtonDelete(
@@ -162,7 +268,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                               setState(() {
                                 updateDoc.delete();
                               });
-
                               Navigator.pop(context);
                             },
                             child: const Text('Yes',
