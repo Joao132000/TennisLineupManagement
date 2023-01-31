@@ -15,13 +15,13 @@ class NewTeam extends StatefulWidget {
 }
 
 class _NewTeamState extends State<NewTeam> {
-  final universityController = TextEditingController();
+  final schoolController = TextEditingController();
   final leagueController = TextEditingController();
   String type = 'Men Tennis Team';
 
   @override
   void dispose() {
-    universityController.dispose();
+    schoolController.dispose();
     leagueController.dispose();
     super.dispose();
   }
@@ -34,6 +34,9 @@ class _NewTeamState extends State<NewTeam> {
     'Women Tennis Team',
     'Boys Tennis Team',
     'Girls Tennis Team',
+    'Men Senior',
+    'Women Senior',
+    'Overall',
   ];
 
   @override
@@ -57,9 +60,10 @@ class _NewTeamState extends State<NewTeam> {
               ),
               const SizedBox(height: 10),
               TextField(
-                controller: universityController,
+                controller: schoolController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'University'),
+                decoration:
+                    const InputDecoration(labelText: 'School/Organization'),
               ),
               const SizedBox(height: 5),
               TextField(
@@ -120,7 +124,7 @@ class _NewTeamState extends State<NewTeam> {
     final coach = Team(
       id: docCoach.id,
       type: type,
-      university: universityController.text,
+      school: schoolController.text,
       league: leagueController.text,
       coachId: FirebaseAuth.instance.currentUser!.uid,
     );

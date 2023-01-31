@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:line_up/screens/new_team.dart';
 import 'package:line_up/screens/players_by_team.dart';
+import 'package:line_up/screens/posts.dart';
 
 import '../models/coach.dart';
 
@@ -14,11 +16,13 @@ class MainCoach extends StatefulWidget {
 }
 
 class _MainCoachState extends State<MainCoach> {
+  Coach? coach;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teams'),
+        title: Text('Teams'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -64,29 +68,48 @@ class _MainCoachState extends State<MainCoach> {
       BuildContext context, DocumentSnapshot<Object?> doc) {
     return GestureDetector(
       onTap: () {
-        buildShowDialog(context, doc);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PlayersByTeam(
+                  teamId: doc['id'],
+                  teamSchool: doc['school'],
+                  teamType: doc['type'])),
+        );
       },
       child: Card(
           child: ListTile(
-        title: Text(doc['university'],
+        title: Text(doc['school'],
             style: const TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 30,
+              fontSize: 25,
             )),
-        trailing: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PlayersByTeam(
-                      teamId: doc['id'],
-                      teamUniversity: doc['university'],
-                      teamType: doc['type'])),
-            );
-          },
-          icon: const Icon(Icons.list_outlined),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () async {
+                final c = await getCoach();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Posts(
+                            teamId: doc['id'],
+                            userName: c.name,
+                          )),
+                );
+              },
+              icon: const Icon(Icons.post_add),
+            ),
+            IconButton(
+              onPressed: () {
+                buildShowDialog(context, doc);
+              },
+              icon: const Icon(Icons.qr_code_2_sharp),
+            ),
+          ],
         ),
-        subtitle: Text(doc['type'],
+        subtitle: Text('${doc['type']}\n${doc['league']}',
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 20,
@@ -113,7 +136,18 @@ class _MainCoachState extends State<MainCoach> {
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('OK',
+                    child: const Text('Close',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 25,
+                        ))),
+                TextButton(
+                    onPressed: () {
+                      final value = ClipboardData(text: doc['id']);
+                      Clipboard.setData(value);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Copy',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 25,
@@ -122,15 +156,19 @@ class _MainCoachState extends State<MainCoach> {
             ));
   }
 
-  Future<QuerySnapshot<Object?>>? read() async {
+  Future<Coach> getCoach() async {
     final docCoach = FirebaseFirestore.instance
         .collection("coach")
         .doc(FirebaseAuth.instance.currentUser!.uid);
     final snapshot = await docCoach.get();
-    final c = Coach.fromJson(snapshot.data()!);
+    return Coach.fromJson(snapshot.data()!);
+  }
+
+  Future<QuerySnapshot<Object?>>? read() async {
+    coach = await getCoach();
     return await FirebaseFirestore.instance
         .collection('team')
-        .where('coachId', isEqualTo: c.id)
+        .where('coachId', isEqualTo: coach?.id)
         .get();
   }
 }
