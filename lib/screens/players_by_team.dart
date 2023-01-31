@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:line_up/screens/team_doubles.dart';
 
 import '../handlers/signin_signout.dart';
 import 'matches_coach.dart';
@@ -8,12 +9,14 @@ class PlayersByTeam extends StatefulWidget {
   final String teamId;
   final String teamSchool;
   final String teamType;
+  final String teamLeague;
 
   const PlayersByTeam(
       {Key? key,
       required this.teamId,
       required this.teamSchool,
-      required this.teamType})
+      required this.teamType,
+      required this.teamLeague})
       : super(key: key);
 
   @override
@@ -55,12 +58,17 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                     Text(widget.teamSchool,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 30,
+                          fontSize: 25,
+                        )),
+                    Text(widget.teamLeague,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
                         )),
                     Text(widget.teamType,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 25,
+                          fontSize: 20,
                         )),
                     const SizedBox(
                       height: 20,
@@ -71,11 +79,36 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blueAccent.shade200,
+                              minimumSize: const Size(150, 40),
+                              // foreground
+                            ),
+                            child: const Text(
+                              'Doubles',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TeamDoubles(
+                                    teamId: widget.teamId,
+                                    teamSchool: widget.teamSchool,
+                                    teamType: widget.teamType,
+                                    teamLeague: widget.teamLeague,
+                                  ),
+                                ),
+                              );
+                            }),
                         const SizedBox(
                           height: 70,
                         ),
                         const SizedBox(
-                          width: 190,
+                          width: 10,
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(

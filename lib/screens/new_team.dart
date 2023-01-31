@@ -26,16 +26,16 @@ class _NewTeamState extends State<NewTeam> {
     super.dispose();
   }
 
-  String dropdownvalue = 'Men Tennis Team';
+  String dropdownvalue = "Men's Tennis Team";
 
   // List of items in our dropdown menu
   var items = [
-    "Men Tennis Team",
-    'Women Tennis Team',
-    'Boys Tennis Team',
-    'Girls Tennis Team',
-    'Men Senior',
-    'Women Senior',
+    "Men's Tennis Team",
+    "Women's Tennis Team",
+    "Boy's Tennis Team",
+    "Girl's Tennis Team",
+    "Men's Senior",
+    "Women's Senior",
     'Overall',
   ];
 

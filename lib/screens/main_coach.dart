@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:line_up/screens/new_team.dart';
 import 'package:line_up/screens/players_by_team.dart';
 import 'package:line_up/screens/posts.dart';
 
 import '../models/coach.dart';
+import 'new_team.dart';
 
 class MainCoach extends StatefulWidget {
   const MainCoach({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _MainCoachState extends State<MainCoach> {
                             .map((doc) => buildGestureDetector(context, doc))
                             .toList()),
                   ),
-                  const Button(),
+                  const NewTeamButton(),
                 ],
               );
             } else if (snapshot.hasError) {
@@ -71,19 +71,24 @@ class _MainCoachState extends State<MainCoach> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => PlayersByTeam(
-                  teamId: doc['id'],
-                  teamSchool: doc['school'],
-                  teamType: doc['type'])),
+            builder: (context) => PlayersByTeam(
+              teamId: doc['id'],
+              teamSchool: doc['school'],
+              teamType: doc['type'],
+              teamLeague: doc['league'],
+            ),
+          ),
         );
       },
       child: Card(
           child: ListTile(
-        title: Text(doc['school'],
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 25,
-            )),
+        title: Text(
+          doc['school'],
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 25,
+          ),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -93,10 +98,11 @@ class _MainCoachState extends State<MainCoach> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Posts(
-                            teamId: doc['id'],
-                            userName: c.name,
-                          )),
+                    builder: (context) => Posts(
+                      teamId: doc['id'],
+                      userName: c.name,
+                    ),
+                  ),
                 );
               },
               icon: const Icon(Icons.post_add),
@@ -173,8 +179,8 @@ class _MainCoachState extends State<MainCoach> {
   }
 }
 
-class Button extends StatelessWidget {
-  const Button({
+class NewTeamButton extends StatelessWidget {
+  const NewTeamButton({
     Key? key,
   }) : super(key: key);
 
