@@ -183,10 +183,10 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                 context: context,
                 builder: (context) => AlertDialog(
                       title: Text(
-                        'Move ${doc['name']} to a new team',
+                        'Move ${doc['name']} to a new team:',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 20,
+                          fontSize: 25,
                         ),
                         textAlign: TextAlign.center,
                       ),

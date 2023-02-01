@@ -23,7 +23,7 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: const Text('Team Doubles Lineup'),
+        title: const Text('Doubles Lineup'),
         automaticallyImplyLeading: false,
       ),
       body: GestureDetector(
@@ -42,6 +42,16 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
               future: read(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  if (snapshot.data!.size == 0) {
+                    return AlertDialog(
+                      content: Text('No doubles for this team yet!'),
+                      actions: [
+                        IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.arrow_back))
+                      ],
+                    );
+                  }
                   final List<DocumentSnapshot> documents = snapshot.data!.docs;
                   return Column(
                     children: [

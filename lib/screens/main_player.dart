@@ -26,8 +26,8 @@ class _MainPlayerState extends State<MainPlayer> {
   String? league;
   Player? p;
   final newTeamCodeController = TextEditingController();
-
   bool checkTeam = false;
+
   Future checkTeamFunc() async {
     if (newTeamCodeController.text != "") {
       final docTeam = FirebaseFirestore.instance
@@ -48,7 +48,7 @@ class _MainPlayerState extends State<MainPlayer> {
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: Text(
-          'Lineups',
+          'Singles Lineup',
           style: const TextStyle(
             fontSize: 20,
           ),
@@ -152,7 +152,7 @@ class _MainPlayerState extends State<MainPlayer> {
         ],
       ),
       body: GestureDetector(
-        onPanUpdate: (details) {
+        onPanUpdate: (details) async {
           if (details.delta.dx < 0) {
             Navigator.push(
               context,

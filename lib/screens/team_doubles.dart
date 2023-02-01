@@ -192,8 +192,13 @@ class _TeamDoublesState extends State<TeamDoubles> {
                                       children: [
                                         TextButton(
                                           onPressed: () {
-                                            saveDouble();
-                                            Navigator.pop(context);
+                                            if ((positionController.text !=
+                                                    '') &&
+                                                (selectedPlayer2 != null) &&
+                                                (selectedPlayer1 != null)) {
+                                              saveDouble();
+                                              Navigator.pop(context);
+                                            }
                                           },
                                           child: const Text(
                                             'Confirm',

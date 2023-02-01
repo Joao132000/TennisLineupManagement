@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_up/handlers/signin_signout.dart';
+import 'package:line_up/handlers/utils.dart';
 
 import '../models/team.dart';
 
@@ -96,12 +97,18 @@ class _NewTeamState extends State<NewTeam> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  saveTeam();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SignInSignOut()),
-                  );
+                  if ((leagueController.text != "") &&
+                      (schoolController.text != "") &&
+                      (type != "")) {
+                    saveTeam();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInSignOut()),
+                    );
+                  } else {
+                    Utils.showSnackBar('Please fill out all fields!');
+                  }
                 },
                 style: ButtonStyle(
                     minimumSize:
