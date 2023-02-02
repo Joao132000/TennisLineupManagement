@@ -27,10 +27,19 @@ class _NewTeamState extends State<NewTeam> {
     super.dispose();
   }
 
-  String dropdownvalue = "Men's Team";
+  String dropDownType = "Men's Team";
+  String dropDownPosition = '2';
+
+  var itemsPosition = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+  ];
 
   // List of items in our dropdown menu
-  var items = [
+  var itemsType = [
     "Men's Team",
     "Women's Team",
     "Boy's Team",
@@ -77,9 +86,9 @@ class _NewTeamState extends State<NewTeam> {
                 children: [
                   DropdownButton(
                     alignment: AlignmentDirectional.bottomStart,
-                    value: dropdownvalue,
+                    value: dropDownType,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: items.map((String items) {
+                    items: itemsType.map((String items) {
                       return DropdownMenuItem(
                         value: items,
                         child: Text(items),
@@ -87,8 +96,26 @@ class _NewTeamState extends State<NewTeam> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownvalue = newValue!;
+                        dropDownType = newValue!;
                         type = newValue;
+                      });
+                    },
+                  ),
+                  Text('  Challenge Positions:   '),
+                  DropdownButton(
+                    //hint: Text('Positions'),
+                    alignment: AlignmentDirectional.centerEnd,
+                    value: dropDownPosition,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: itemsPosition.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropDownPosition = newValue!;
                       });
                     },
                   ),
@@ -134,6 +161,7 @@ class _NewTeamState extends State<NewTeam> {
       school: schoolController.text,
       league: leagueController.text,
       coachId: FirebaseAuth.instance.currentUser!.uid,
+      challengePositions: int.parse(dropDownPosition),
     );
     final json = coach.toJson();
     await docCoach.set(json);

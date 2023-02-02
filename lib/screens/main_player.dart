@@ -24,6 +24,7 @@ class _MainPlayerState extends State<MainPlayer> {
   String? type;
   String? university;
   String? league;
+  int challengePosition = 2;
   Player? p;
   final newTeamCodeController = TextEditingController();
   bool checkTeam = false;
@@ -236,10 +237,12 @@ class _MainPlayerState extends State<MainPlayer> {
                                                   (doc['position'] != 0)) &&
                                               (p?.challenge == false))
                                           ? () {
-                                              if (((doc['position'] + 1) ==
-                                                      (p?.position)) ||
-                                                  ((doc['position'] + 2) ==
-                                                      (p?.position))) {
+                                              final challengePositionCheck =
+                                                  p!.position - doc['position'];
+                                              if ((challengePositionCheck <=
+                                                      challengePosition) &&
+                                                  (challengePositionCheck >
+                                                      0)) {
                                                 final playerChallenged =
                                                     FirebaseFirestore.instance
                                                         .collection('player')
@@ -266,7 +269,7 @@ class _MainPlayerState extends State<MainPlayer> {
                                                 sendPushMessage(doc['token']);
                                               } else {
                                                 Utils.showSnackBar(
-                                                    'You can only challenge a player one or two positions above you');
+                                                    'You can only challenge players ${challengePosition} position(s) above you');
                                               }
                                             }
                                           : null,
@@ -385,6 +388,7 @@ class _MainPlayerState extends State<MainPlayer> {
     league = t.league;
     type = t.type;
     university = t.school;
+    challengePosition = t.challengePositions;
     return await FirebaseFirestore.instance
         .collection('player')
         .orderBy('position')
