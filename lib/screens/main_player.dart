@@ -361,7 +361,12 @@ class _MainPlayerState extends State<MainPlayer> {
                     ],
                   );
                 } else if (snapshot.hasError) {
-                  return const Text('Its Error!');
+                  return Center(
+                    child: const Text(
+                      'Something went wrong or you do not belong to any team at the moment!',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
                 } else {
                   return const Center(
                     child: CircularProgressIndicator(),
