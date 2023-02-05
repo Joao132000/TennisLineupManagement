@@ -34,11 +34,11 @@ class _SignInState extends State<SignIn> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 70),
             const Text(
-              'Tennis Lineups',
+              'Tennis LineApp',
               style: TextStyle(
-                fontSize: 35,
+                fontSize: 40,
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
