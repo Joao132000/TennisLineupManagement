@@ -52,6 +52,9 @@ class _MainCoachState extends State<MainCoach> {
                             .toList()),
                   ),
                   const NewTeamButton(),
+                  const SizedBox(
+                    height: 20,
+                  ),
                 ],
               );
             } else if (snapshot.hasError) {
@@ -95,9 +98,8 @@ class _MainCoachState extends State<MainCoach> {
                               'Are you sure you want to delete this team?',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 20,
+                                fontSize: 25,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                             actions: [
                               Row(

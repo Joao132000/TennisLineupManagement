@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../models/post.dart';
 import '../models/team.dart';
@@ -59,6 +60,8 @@ class _PostsState extends State<Posts> {
               final QueryDocumentSnapshot doc = snapshot.data!.docs[index];
 
               final Post post = Post.fromSnapshot(doc);
+              final String formattedDate = DateFormat('M/dd/yyyy - kk:mm')
+                  .format(post.timeStamp.toDate());
 
               return Column(
                 children: [
@@ -90,11 +93,7 @@ class _PostsState extends State<Posts> {
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                     alignment: Alignment.topRight,
                     child: Text(
-                      '${post.timeStamp.toDate().month.toString()}/'
-                      '${post.timeStamp.toDate().day.toString()}/'
-                      '${post.timeStamp.toDate().year.toString()}  '
-                      '${post.timeStamp.toDate().hour.toString()}:'
-                      '${post.timeStamp.toDate().minute.toString()}',
+                      formattedDate,
                       style: TextStyle(
                         fontSize: 13,
                       ),

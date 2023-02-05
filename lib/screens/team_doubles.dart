@@ -138,6 +138,7 @@ class _TeamDoublesState extends State<TeamDoubles> {
                                                         MainAxisAlignment.start,
                                                     children: [
                                                       DropdownButton(
+                                                        menuMaxHeight: 200,
                                                         items: items,
                                                         onChanged:
                                                             (dynamic value) {
@@ -158,6 +159,7 @@ class _TeamDoublesState extends State<TeamDoubles> {
                                                         MainAxisAlignment.start,
                                                     children: [
                                                       DropdownButton(
+                                                        menuMaxHeight: 200,
                                                         items: items,
                                                         onChanged:
                                                             (dynamic value) {
@@ -235,7 +237,7 @@ class _TeamDoublesState extends State<TeamDoubles> {
                       ],
                     ),
                     const SizedBox(
-                      height: 5,
+                      height: 20,
                     ),
                   ],
                 );
@@ -265,11 +267,15 @@ class _TeamDoublesState extends State<TeamDoubles> {
                     ),
                     backgroundColor: Colors.lightBlueAccent,
                   ),
-                  title: Text("${doc['player1name']}/${doc['player2name']}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
+                  title: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text("${doc['player1name']}/${doc['player2name']}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                  ),
                   trailing: buildRowIcons(context, doc),
                 )))
             .toList());
@@ -293,7 +299,7 @@ class _TeamDoublesState extends State<TeamDoubles> {
             context: context,
             builder: (context) => AlertDialog(
                   title: const Text(
-                      'Are you sure that you want to remove this double from the lineup?',
+                      'Are you sure you want to remove this doubles from the lineup?',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 25,

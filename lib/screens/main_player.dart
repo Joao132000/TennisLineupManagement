@@ -65,12 +65,11 @@ class _MainPlayerState extends State<MainPlayer> {
                       context: context,
                       builder: (context) => AlertDialog(
                             title: Text(
-                              'Paste code below to move to a new team',
+                              'Paste code below to move to a new team:',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 20,
+                                fontSize: 25,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                             content: TextField(
                               controller: newTeamCodeController,
@@ -214,11 +213,15 @@ class _MainPlayerState extends State<MainPlayer> {
                                       ),
                                       backgroundColor: Colors.lightBlueAccent,
                                     ),
-                                    title: Text(doc['name'],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 30,
-                                        )),
+                                    title: FittedBox(
+                                      alignment: Alignment.centerLeft,
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(doc['name'],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 30,
+                                          )),
+                                    ),
                                     trailing: IconButton(
                                       disabledColor: doc['challenge']
                                           ? Colors.red
@@ -354,7 +357,7 @@ class _MainPlayerState extends State<MainPlayer> {
                             ],
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 25,
                           )
                         ],
                       )

@@ -85,6 +85,7 @@ class _NewTeamState extends State<NewTeam> {
               Row(
                 children: [
                   DropdownButton(
+                    menuMaxHeight: 200,
                     alignment: AlignmentDirectional.bottomStart,
                     value: dropDownType,
                     icon: const Icon(Icons.keyboard_arrow_down),
@@ -103,7 +104,7 @@ class _NewTeamState extends State<NewTeam> {
                   ),
                   Text('  Challenge Positions:   '),
                   DropdownButton(
-                    //hint: Text('Positions'),
+                    menuMaxHeight: 200,
                     alignment: AlignmentDirectional.centerEnd,
                     value: dropDownPosition,
                     icon: const Icon(Icons.keyboard_arrow_down),

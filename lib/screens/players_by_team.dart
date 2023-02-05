@@ -132,6 +132,9 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                           ),
                         ),
                       ],
+                    ),
+                    SizedBox(
+                      height: 15,
                     )
                   ],
                 );
@@ -161,11 +164,15 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                     ),
                     backgroundColor: Colors.lightBlueAccent,
                   ),
-                  title: Text(doc['name'],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
+                  title: FittedBox(
+                    alignment: Alignment.centerLeft,
+                    fit: BoxFit.scaleDown,
+                    child: Text(doc['name'],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                  ),
                   trailing: buildRowIcons(context, doc),
                 )))
             .toList());
@@ -188,7 +195,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
                           fontWeight: FontWeight.w600,
                           fontSize: 25,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       content: TextField(
                         controller: newTeamCodeController,

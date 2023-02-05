@@ -123,11 +123,15 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
                     ),
                     backgroundColor: Colors.lightBlueAccent,
                   ),
-                  title: Text("${doc['player1name']}/${doc['player2name']}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      )),
+                  title: FittedBox(
+                    alignment: Alignment.centerLeft,
+                    fit: BoxFit.scaleDown,
+                    child: Text("${doc['player1name']}/${doc['player2name']}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        )),
+                  ),
                 )))
             .toList());
   }

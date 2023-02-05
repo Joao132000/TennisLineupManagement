@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../handlers/signin_signout.dart';
 import '../models/player.dart';
@@ -14,14 +15,10 @@ class Matches extends StatefulWidget {
 }
 
 class _MatchesState extends State<Matches> {
-  String date = '';
-  String? minute;
-  String? hour;
-  String? day;
-  String? month;
   final resultController = TextEditingController();
   String? radioButton;
   final currentUser = FirebaseAuth.instance.currentUser!.uid;
+  String formattedDate = DateFormat('M/dd/yyyy - kk:mm').format(DateTime.now());
 
   @override
   void dispose() {
@@ -108,16 +105,20 @@ class _MatchesState extends State<Matches> {
       child: Card(
           color: ((doc['result']) != "No result yet") ? Colors.green : null,
           child: ListTile(
-            title: Text(
-                '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 25,
-                )),
+            title: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                  '${doc['player1name'].toString()} X ${doc['player2name'].toString()}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 25,
+                  )),
+            ),
             subtitle: Text(doc['date'],
                 style: const TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
                 )),
             trailing: Visibility(
               visible: (((currentUser == doc['player1id']) ||
@@ -149,9 +150,8 @@ class _MatchesState extends State<Matches> {
                     'Are you sure you want to delete this match?',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 25,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   actions: [
                     Row(
@@ -228,7 +228,13 @@ class _MatchesState extends State<Matches> {
                 child: Column(
                   children: <Widget>[
                     ListTile(
-                      title: Text(doc['player1name']),
+                      title: Text(
+                        doc['player1name'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                      ),
                       leading: Radio(
                         value: 'player1',
                         groupValue: radioButton,
@@ -240,7 +246,13 @@ class _MatchesState extends State<Matches> {
                       ),
                     ),
                     ListTile(
-                      title: Text(doc['player2name']),
+                      title: Text(
+                        doc['player2name'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                      ),
                       leading: Radio(
                         value: 'player2',
                         groupValue: radioButton,
@@ -264,7 +276,7 @@ class _MatchesState extends State<Matches> {
             title: const Text('Match Result:',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 25,
                 )),
             actions: [
               Row(
@@ -376,11 +388,8 @@ class _MatchesState extends State<Matches> {
                         use24hFormat: true,
                         onDateTimeChanged: (val) {
                           setState(() {
-                            minute = val.minute.toString();
-                            hour = val.hour.toString();
-                            day = val.day.toString();
-                            month = val.month.toString();
-                            date = '$month/$day - $hour:$minute';
+                            formattedDate =
+                                DateFormat('M/dd/yyyy - kk:mm').format(val);
                           });
                         }),
                   ),
@@ -394,7 +403,7 @@ class _MatchesState extends State<Matches> {
                                   .doc(doc['id']);
                               setState(() {
                                 updateDoc.update({
-                                  'date': date,
+                                  'date': formattedDate,
                                 });
                               });
 
