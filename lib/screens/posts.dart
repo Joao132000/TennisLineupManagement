@@ -63,7 +63,7 @@ class _PostsState extends State<Posts> {
               return Column(
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 5,
                   ),
                   Container(
                     padding:
@@ -79,7 +79,7 @@ class _PostsState extends State<Posts> {
                           color: Colors.blueGrey,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
-                    margin: EdgeInsets.all(5),
+                    //margin: EdgeInsets.all(5),
                     padding: const EdgeInsets.all(10),
                     alignment: Alignment.topLeft,
                     child: Text(post.description,
@@ -129,43 +129,46 @@ class _PostsState extends State<Posts> {
                         children: [
                           TextButton(
                               onPressed: () async {
-                                final docPost = FirebaseFirestore.instance
-                                    .collection('posts')
-                                    .doc();
-                                final post = Post(
-                                  id: docPost.id,
-                                  teamId: widget.teamId!,
-                                  userName: widget.userName!,
-                                  timeStamp: Timestamp.now(),
-                                  description: descriptionController.text,
-                                );
-                                final json = post.toJson();
-                                await docPost.set(json);
-                                Navigator.pop(context);
-                                descriptionController.clear();
-                                FirebaseFirestore.instance
-                                    .collection('player')
-                                    .where('teamId', isEqualTo: widget.teamId!)
-                                    .get()
-                                    .then((QuerySnapshot snapshot) {
-                                  snapshot.docs.forEach((element) {
-                                    sendPushMessage(element['token']);
+                                if (descriptionController.text != "") {
+                                  final docPost = FirebaseFirestore.instance
+                                      .collection('posts')
+                                      .doc();
+                                  final post = Post(
+                                    id: docPost.id,
+                                    teamId: widget.teamId!,
+                                    userName: widget.userName!,
+                                    timeStamp: Timestamp.now(),
+                                    description: descriptionController.text,
+                                  );
+                                  final json = post.toJson();
+                                  await docPost.set(json);
+                                  Navigator.pop(context);
+                                  descriptionController.clear();
+                                  FirebaseFirestore.instance
+                                      .collection('player')
+                                      .where('teamId',
+                                          isEqualTo: widget.teamId!)
+                                      .get()
+                                      .then((QuerySnapshot snapshot) {
+                                    snapshot.docs.forEach((element) {
+                                      sendPushMessage(element['token']);
+                                    });
                                   });
-                                });
-                                final docTeam = FirebaseFirestore.instance
-                                    .collection("team")
-                                    .doc(widget.teamId!);
-                                final snapshotTeam = await docTeam.get();
-                                final t = Team.fromJson(snapshotTeam.data()!);
-                                FirebaseFirestore.instance
-                                    .collection('coach')
-                                    .where('id', isEqualTo: t.coachId)
-                                    .get()
-                                    .then((QuerySnapshot snapshot) {
-                                  snapshot.docs.forEach((element) {
-                                    sendPushMessage(element['token']);
+                                  final docTeam = FirebaseFirestore.instance
+                                      .collection("team")
+                                      .doc(widget.teamId!);
+                                  final snapshotTeam = await docTeam.get();
+                                  final t = Team.fromJson(snapshotTeam.data()!);
+                                  FirebaseFirestore.instance
+                                      .collection('coach')
+                                      .where('id', isEqualTo: t.coachId)
+                                      .get()
+                                      .then((QuerySnapshot snapshot) {
+                                    snapshot.docs.forEach((element) {
+                                      sendPushMessage(element['token']);
+                                    });
                                   });
-                                });
+                                }
                               },
                               child: const Text('Confirm',
                                   style: TextStyle(

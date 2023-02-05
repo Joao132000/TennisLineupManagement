@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_up/handlers/signin_signout.dart';
+import 'package:line_up/handlers/utils.dart';
 
 import '../models/team.dart';
 
@@ -17,7 +18,7 @@ class NewTeam extends StatefulWidget {
 class _NewTeamState extends State<NewTeam> {
   final schoolController = TextEditingController();
   final leagueController = TextEditingController();
-  String type = 'Men Tennis Team';
+  String type = "Men's Team";
 
   @override
   void dispose() {
@@ -26,16 +27,25 @@ class _NewTeamState extends State<NewTeam> {
     super.dispose();
   }
 
-  String dropdownvalue = 'Men Tennis Team';
+  String dropDownType = "Men's Team";
+  String dropDownPosition = '2';
+
+  var itemsPosition = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+  ];
 
   // List of items in our dropdown menu
-  var items = [
-    "Men Tennis Team",
-    'Women Tennis Team',
-    'Boys Tennis Team',
-    'Girls Tennis Team',
-    'Men Senior',
-    'Women Senior',
+  var itemsType = [
+    "Men's Team",
+    "Women's Team",
+    "Boy's Team",
+    "Girl's Team",
+    "Men's Senior",
+    "Women's Senior",
     'Overall',
   ];
 
@@ -76,9 +86,9 @@ class _NewTeamState extends State<NewTeam> {
                 children: [
                   DropdownButton(
                     alignment: AlignmentDirectional.bottomStart,
-                    value: dropdownvalue,
+                    value: dropDownType,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: items.map((String items) {
+                    items: itemsType.map((String items) {
                       return DropdownMenuItem(
                         value: items,
                         child: Text(items),
@@ -86,8 +96,26 @@ class _NewTeamState extends State<NewTeam> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownvalue = newValue!;
+                        dropDownType = newValue!;
                         type = newValue;
+                      });
+                    },
+                  ),
+                  Text('  Challenge Positions:   '),
+                  DropdownButton(
+                    //hint: Text('Positions'),
+                    alignment: AlignmentDirectional.centerEnd,
+                    value: dropDownPosition,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: itemsPosition.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropDownPosition = newValue!;
                       });
                     },
                   ),
@@ -96,12 +124,18 @@ class _NewTeamState extends State<NewTeam> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  saveTeam();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SignInSignOut()),
-                  );
+                  if ((leagueController.text != "") &&
+                      (schoolController.text != "") &&
+                      (type != "")) {
+                    saveTeam();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInSignOut()),
+                    );
+                  } else {
+                    Utils.showSnackBar('Please fill out all fields!');
+                  }
                 },
                 style: ButtonStyle(
                     minimumSize:
@@ -127,6 +161,7 @@ class _NewTeamState extends State<NewTeam> {
       school: schoolController.text,
       league: leagueController.text,
       coachId: FirebaseAuth.instance.currentUser!.uid,
+      challengePositions: int.parse(dropDownPosition),
     );
     final json = coach.toJson();
     await docCoach.set(json);

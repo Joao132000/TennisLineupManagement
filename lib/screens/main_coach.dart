@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:line_up/screens/new_team.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_up/screens/players_by_team.dart';
 import 'package:line_up/screens/posts.dart';
 
 import '../models/coach.dart';
+import 'new_team.dart';
 
 class MainCoach extends StatefulWidget {
   const MainCoach({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class _MainCoachState extends State<MainCoach> {
                             .map((doc) => buildGestureDetector(context, doc))
                             .toList()),
                   ),
-                  const Button(),
+                  const NewTeamButton(),
                 ],
               );
             } else if (snapshot.hasError) {
@@ -71,50 +72,117 @@ class _MainCoachState extends State<MainCoach> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => PlayersByTeam(
-                  teamId: doc['id'],
-                  teamSchool: doc['school'],
-                  teamType: doc['type'])),
+            builder: (context) => PlayersByTeam(
+              teamId: doc['id'],
+              teamSchool: doc['school'],
+              teamType: doc['type'],
+              teamLeague: doc['league'],
+            ),
+          ),
         );
       },
       child: Card(
+        child: Slidable(
+          endActionPane: ActionPane(
+            motion: ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (context) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text(
+                              'Are you sure you want to delete this team?',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            actions: [
+                              Row(
+                                children: [
+                                  TextButton(
+                                    child: const Text(
+                                      'Confirm',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      final deleteDoc = FirebaseFirestore
+                                          .instance
+                                          .collection('team')
+                                          .doc(doc['id']);
+                                      setState(() {
+                                        deleteDoc.delete();
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ));
+                },
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+              )
+            ],
+          ),
           child: ListTile(
-        title: Text(doc['school'],
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 25,
-            )),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () async {
-                final c = await getCoach();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Posts(
-                            teamId: doc['id'],
-                            userName: c.name,
-                          )),
-                );
-              },
-              icon: const Icon(Icons.post_add),
+            title: Text(
+              doc['school'],
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 25,
+              ),
             ),
-            IconButton(
-              onPressed: () {
-                buildShowDialog(context, doc);
-              },
-              icon: const Icon(Icons.qr_code_2_sharp),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    final c = await getCoach();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Posts(
+                          teamId: doc['id'],
+                          userName: c.name,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.post_add),
+                ),
+                IconButton(
+                  onPressed: () {
+                    buildShowDialog(context, doc);
+                  },
+                  icon: const Icon(Icons.qr_code_2_sharp),
+                ),
+              ],
             ),
-          ],
+            subtitle: Text('${doc['type']}\n${doc['league']}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                )),
+          ),
         ),
-        subtitle: Text('${doc['type']}\n${doc['league']}',
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 20,
-            )),
-      )),
+      ),
     );
   }
 
@@ -173,8 +241,8 @@ class _MainCoachState extends State<MainCoach> {
   }
 }
 
-class Button extends StatelessWidget {
-  const Button({
+class NewTeamButton extends StatelessWidget {
+  const NewTeamButton({
     Key? key,
   }) : super(key: key);
 

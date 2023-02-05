@@ -279,7 +279,7 @@ class _MatchesState extends State<Matches> {
                       ),
                       onPressed: () {
                         if ((resultController.text != "") &&
-                            (radioButton != "")) {
+                            (radioButton != null)) {
                           final updateDocPlayer1 = FirebaseFirestore.instance
                               .collection('player')
                               .doc(doc['player1id']);
