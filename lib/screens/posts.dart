@@ -22,6 +22,7 @@ class Posts extends StatefulWidget {
 
 class _PostsState extends State<Posts> {
   final descriptionController = TextEditingController();
+  String messageForNotification = '';
 
   @override
   void dispose() {
@@ -128,6 +129,8 @@ class _PostsState extends State<Posts> {
                         children: [
                           TextButton(
                               onPressed: () async {
+                                messageForNotification =
+                                    descriptionController.text;
                                 if (descriptionController.text != "") {
                                   final docPost = FirebaseFirestore.instance
                                       .collection('posts')
@@ -142,7 +145,6 @@ class _PostsState extends State<Posts> {
                                   final json = post.toJson();
                                   await docPost.set(json);
                                   Navigator.pop(context);
-                                  descriptionController.clear();
                                   FirebaseFirestore.instance
                                       .collection('player')
                                       .where('teamId',
@@ -168,6 +170,7 @@ class _PostsState extends State<Posts> {
                                     });
                                   });
                                 }
+                                descriptionController.clear();
                               },
                               child: const Text('Confirm',
                                   style: TextStyle(
@@ -204,12 +207,12 @@ class _PostsState extends State<Posts> {
             'data': <String, dynamic>{
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
               'status': 'done',
-              'body': 'Check it out...',
-              'title': 'New Post!',
+              'body': messageForNotification,
+              'title': widget.userName,
             },
             'notification': <String, dynamic>{
-              'body': 'Check it out...',
-              'title': 'New Post!',
+              'body': messageForNotification,
+              'title': widget.userName,
               'android_channel_id': 'channelID'
             },
             'to': token,

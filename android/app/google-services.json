@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:321283554315:android:c09912fda806d3f74c1b0e",
+        "mobilesdk_app_id": "1:321283554315:android:c66126a947210b4a4c1b0e",
         "android_client_info": {
-          "package_name": "com.example.line_up"
+          "package_name": "com.jpcsc.lineUp"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "321283554315-57372ov2pj204i79pqjoi7ap9lvc37ip.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "321283554315-77089kbb6oi4agvtkbpqqpr8fqtm4j0v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jpcsc.lineUp"
+              }
             }
           ]
         }
