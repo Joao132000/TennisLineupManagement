@@ -288,43 +288,44 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
     return IconButton(
       onPressed: () {
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text(
-                      'Are you sure that you want to remove this player from the lineup?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      )),
-                  actions: [
-                    Row(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              final updateDoc = FirebaseFirestore.instance
-                                  .collection('player')
-                                  .doc(doc['id']);
-                              setState(() {
-                                updateDoc.delete();
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Yes',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25,
-                                ))),
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('No',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25,
-                                ))),
-                      ],
-                    ),
-                  ],
-                ));
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text(
+                'Are you sure that you want to remove this player from the lineup?',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 25,
+                )),
+            actions: [
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        final updateDoc = FirebaseFirestore.instance
+                            .collection('player')
+                            .doc(doc['id']);
+                        setState(() {
+                          updateDoc.delete();
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Yes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 25,
+                          ))),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('No',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 25,
+                          ))),
+                ],
+              ),
+            ],
+          ),
+        );
       },
       icon: const Icon(Icons.delete),
     );

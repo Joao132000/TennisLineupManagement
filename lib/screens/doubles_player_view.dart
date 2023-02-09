@@ -126,7 +126,7 @@ class _DoublesPlayerViewState extends State<DoublesPlayerView> {
                   title: FittedBox(
                     alignment: Alignment.centerLeft,
                     fit: BoxFit.scaleDown,
-                    child: Text("${doc['player1name']}/${doc['player2name']}",
+                    child: Text(doc['players'],
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 30,

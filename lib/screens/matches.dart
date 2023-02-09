@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:line_up/screens/practice_match_player.dart';
 
 import '../handlers/signin_signout.dart';
 import '../models/player.dart';
@@ -16,6 +17,7 @@ class Matches extends StatefulWidget {
 
 class _MatchesState extends State<Matches> {
   final resultController = TextEditingController();
+  Player? p;
   String? radioButton;
   final currentUser = FirebaseAuth.instance.currentUser!.uid;
   String formattedDate = DateFormat('M/dd/yyyy - kk:mm').format(DateTime.now());
@@ -31,46 +33,82 @@ class _MatchesState extends State<Matches> {
       appBar: AppBar(
         title: const Text('Team Matches'),
       ),
-      body: RefreshIndicator(
-        onRefresh: () {
-          return Future(() {
-            setState(() {});
-          });
+      body: GestureDetector(
+        onPanUpdate: (details) async {
+          if (details.delta.dx < 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PracticeMatchPlayer(
+                  teamId: p!.teamId,
+                ),
+              ),
+            );
+          }
         },
-        child: FutureBuilder<QuerySnapshot>(
-            future: read(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                return Column(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text('Matches',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 30,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                        child: ListView(
-                            children: documents
-                                .map(
-                                    (doc) => buildGestureDetector(context, doc))
-                                .toList())),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return const Text('Something went wrong!');
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future(() {
+              setState(() {});
+            });
+          },
+          child: FutureBuilder<QuerySnapshot>(
+              future: read(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text('Challenge Matches',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 30,
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                          child: ListView(
+                              children: documents
+                                  .map((doc) =>
+                                      buildGestureDetector(context, doc))
+                                  .toList())),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                'Swipe to see practice matches -->',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      )
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return const Text('Something went wrong!');
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ),
       ));
 
   GestureDetector buildGestureDetector(
@@ -86,7 +124,7 @@ class _MatchesState extends State<Matches> {
                         fontSize: 25,
                       )),
                   content: Text(
-                      'Winner: ${doc['winner']} \nResult: ${doc['result']}',
+                      'Winner: ${doc['winner']} \n \nResult: ${doc['result']}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,
@@ -435,11 +473,11 @@ class _MatchesState extends State<Matches> {
         .collection("player")
         .doc(FirebaseAuth.instance.currentUser!.uid);
     final snapshot = await docPlayer.get();
-    final p = Player.fromJson(snapshot.data()!);
+    p = Player.fromJson(snapshot.data()!);
     return await FirebaseFirestore.instance
         .collection('match')
         .orderBy('timeStamp', descending: true)
-        .where('teamId', isEqualTo: p.teamId)
+        .where('teamId', isEqualTo: p?.teamId)
         .get();
   }
 }

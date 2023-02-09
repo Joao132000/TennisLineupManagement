@@ -255,8 +255,9 @@ class _TeamDoublesState extends State<TeamDoubles> {
       List<DocumentSnapshot<Object?>> documents, BuildContext context) {
     return ListView(
         children: documents
-            .map((doc) => Card(
-                    child: ListTile(
+            .map(
+              (doc) => Card(
+                child: ListTile(
                   leading: CircleAvatar(
                     child: Text(
                       doc['position'].toString(),
@@ -270,14 +271,16 @@ class _TeamDoublesState extends State<TeamDoubles> {
                   title: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
-                    child: Text("${doc['player1name']}/${doc['player2name']}",
+                    child: Text(doc['players'],
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 30,
                         )),
                   ),
                   trailing: buildRowIcons(context, doc),
-                )))
+                ),
+              ),
+            )
             .toList());
   }
 
@@ -399,8 +402,7 @@ class _TeamDoublesState extends State<TeamDoubles> {
     final doubles = Doubles(
       id: docDoubles.id,
       teamId: widget.teamId,
-      player1name: selectedPlayer1,
-      player2name: selectedPlayer2,
+      players: '${selectedPlayer1}/${selectedPlayer2}',
       position: int.parse(positionController.text),
     );
     final json = doubles.toJson();
