@@ -82,12 +82,14 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
                         Expanded(
                           child: ListView(
                               children: documents
-                                  .map((doc) =>
-                                      buildGestureDetector(context, doc))
+                                  .map((doc) => buildCard(context, doc))
                                   .toList()),
                         ),
                         Column(
                           children: [
+                            SizedBox(
+                              height: 10,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -119,65 +121,54 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
         ),
       );
 
-  GestureDetector buildGestureDetector(
-      BuildContext context, DocumentSnapshot<Object?> doc) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text(
-              'Match Result:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 25,
-              ),
-            ),
-            content: Text(
-              'Winner: ${doc['winner']} \n \nResult: ${doc['result']}',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'OK',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 25,
+  Card buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
+    return Card(
+      color: ((doc['result']) != "") ? Colors.green : null,
+      child: ListTile(
+        title: (doc['checkSinglesDoubles'] == 'Singles')
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doc['date'],
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        color: Colors.white60),
                   ),
-                ),
+                  Text(
+                    '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doc['date'],
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        color: Colors.white60),
+                  ),
+                  Text(
+                    '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      },
-      child: Card(
-        child: ListTile(
-          title: (doc['checkSinglesDoubles'] == 'Singles')
-              ? Text(
-                  '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 30,
-                  ),
-                )
-              : Text(
-                  '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 30,
-                  ),
-                ),
-          subtitle: Text(
-            doc['date'],
-            style: const TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 20,
-            ),
+        subtitle: Text(
+          '${doc['winner']} ${doc['result']}',
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 17,
           ),
         ),
       ),

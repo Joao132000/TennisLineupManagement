@@ -411,7 +411,7 @@ class _MainPlayerState extends State<MainPlayer> {
       player1id: p?.id,
       player2id: player2id,
       date: '',
-      result: 'No result yet',
+      result: '',
       teamId: p?.teamId,
       player1name: p?.name,
       player2name: player2name,
@@ -419,7 +419,7 @@ class _MainPlayerState extends State<MainPlayer> {
       player1position: p?.position,
       player2position: player2position,
       timeStamp: DateTime.now().microsecondsSinceEpoch,
-      winner: 'No winner yet',
+      winner: '',
     );
     final json = match.toJson();
     await docMatch.set(json);

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import '../models/practice.dart';
@@ -98,12 +99,14 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                         Expanded(
                           child: ListView(
                               children: documents
-                                  .map((doc) =>
-                                      buildGestureDetector(context, doc))
+                                  .map((doc) => buildCard(context, doc))
                                   .toList()),
                         ),
                         Column(
                           children: [
+                            SizedBox(
+                              height: 10,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -508,70 +511,119 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
         ),
       );
 
-  GestureDetector buildGestureDetector(
-      BuildContext context, DocumentSnapshot<Object?> doc) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text(
-              'Match Result:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 25,
-              ),
-            ),
-            content: Text(
-              'Winner: ${doc['winner']} \n \nResult: ${doc['result']}',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'OK',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 25,
+  Slidable buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (context) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text(
+                    'Are you sure you want to delete this practice match?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                    ),
                   ),
+                  actions: [
+                    Row(
+                      children: [
+                        TextButton(
+                          child: const Text(
+                            'Confirm',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () {
+                            final deleteDoc = FirebaseFirestore.instance
+                                .collection('practice')
+                                .doc(doc['id']);
+                            setState(() {
+                              deleteDoc.delete();
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              );
+            },
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
       child: Card(
+        color: ((doc['result']) != "") ? Colors.green : null,
         child: ListTile(
           title: (doc['checkSinglesDoubles'] == 'Singles')
-              ? Text(
-                  '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 30,
-                  ),
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doc['date'],
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          color: Colors.white60),
+                    ),
+                    Text(
+                      '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ],
                 )
-              : Text(
-                  '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 30,
-                  ),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doc['date'],
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          color: Colors.white60),
+                    ),
+                    Text(
+                      '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ],
                 ),
           subtitle: Text(
-            doc['date'],
+            '${doc['winner']} ${doc['result']}',
             style: const TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 20,
+              fontSize: 17,
             ),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
+                iconSize: 35,
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -700,50 +752,6 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                 },
                 icon: const Icon(Icons.scoreboard_outlined),
               ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text(
-                          'Are you sure that you want to remove this match?',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25,
-                          )),
-                      actions: [
-                        Row(
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  final updateDoc = FirebaseFirestore.instance
-                                      .collection('practice')
-                                      .doc(doc['id']);
-                                  setState(() {
-                                    updateDoc.delete();
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Yes',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 25,
-                                    ))),
-                            TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('No',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 25,
-                                    ))),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.delete),
-              ),
             ],
           ),
         ),
@@ -759,9 +767,9 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
       teamId: widget.teamId,
       player1name: selectedPlayer1,
       player2name: selectedPlayer2,
-      result: 'No result yet',
+      result: '',
       timeStamp: Timestamp.now(),
-      winner: 'No winner yet',
+      winner: '',
       checkSinglesDoubles: check,
       date: formattedDate,
     );

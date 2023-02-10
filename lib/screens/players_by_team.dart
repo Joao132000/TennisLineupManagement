@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:line_up/screens/posts.dart';
 import 'package:line_up/screens/team_doubles.dart';
 
 import '../handlers/signin_signout.dart';
+import '../models/coach.dart';
 import 'matches_coach.dart';
 
 class PlayersByTeam extends StatefulWidget {
@@ -39,142 +43,251 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
       appBar: AppBar(
         title: const Text('Team Lineup'),
       ),
-      body: RefreshIndicator(
-        onRefresh: () {
-          return Future(() {
-            setState(() {});
-          });
+      body: GestureDetector(
+        onPanUpdate: (details) async {
+          if (details.delta.dx < 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TeamDoubles(
+                  teamId: widget.teamId,
+                  teamSchool: widget.teamSchool,
+                  teamType: widget.teamType,
+                  teamLeague: widget.teamLeague,
+                ),
+              ),
+            );
+          }
         },
-        child: FutureBuilder<QuerySnapshot>(
-            future: read(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                return Column(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(widget.teamSchool,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 25,
-                        )),
-                    Text(widget.teamLeague,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        )),
-                    Text(widget.teamType,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      child: buildListView(documents, context),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.blueAccent.shade200,
-                              minimumSize: const Size(150, 40),
-                              // foreground
-                            ),
-                            child: const Text(
-                              'Doubles',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TeamDoubles(
-                                    teamId: widget.teamId,
-                                    teamSchool: widget.teamSchool,
-                                    teamType: widget.teamType,
-                                    teamLeague: widget.teamLeague,
-                                  ),
+        child: RefreshIndicator(
+          onRefresh: () {
+            return Future(() {
+              setState(() {});
+            });
+          },
+          child: FutureBuilder<QuerySnapshot>(
+              future: read(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(widget.teamSchool,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 25,
+                          )),
+                      Text(widget.teamLeague,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          )),
+                      Text(widget.teamType,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: buildListView(documents, context),
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Swipe to see doubles lineup -->',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blueAccent.shade200,
+                                  minimumSize: const Size(150, 40),
+                                  // foreground
                                 ),
-                              );
-                            }),
-                        const SizedBox(
-                          height: 70,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.blueAccent.shade200,
-                            minimumSize: const Size(150, 40),
-                            // foreground
+                                child: const Text(
+                                  'Team Posts',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                onPressed: () async {
+                                  final c = await getCoach();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Posts(
+                                        teamId: widget.teamId,
+                                        userName: c.name,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(
+                                height: 70,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blueAccent.shade200,
+                                  minimumSize: const Size(150, 40),
+                                  // foreground
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MatchesCoach(
+                                            teamId: widget.teamId)),
+                                  );
+                                },
+                                child: const Text(
+                                  'Team Matches',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MatchesCoach(teamId: widget.teamId)),
-                            );
-                          },
-                          child: const Text(
-                            'Team Matches',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return const Text('Its Error!');
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      )
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return const Text('Its Error!');
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ),
       ));
+
+  Future<Coach> getCoach() async {
+    final docCoach = FirebaseFirestore.instance
+        .collection("coach")
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshot = await docCoach.get();
+    return Coach.fromJson(snapshot.data()!);
+  }
 
   ListView buildListView(
       List<DocumentSnapshot<Object?>> documents, BuildContext context) {
     return ListView(
         children: documents
-            .map((doc) => Card(
-                    child: ListTile(
-                  leading: CircleAvatar(
-                    child: Text(
-                      doc['position'].toString(),
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    backgroundColor: Colors.lightBlueAccent,
+            .map((doc) => Slidable(
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Are you sure you want to delete this player?',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25,
+                                ),
+                              ),
+                              actions: [
+                                Row(
+                                  children: [
+                                    TextButton(
+                                      child: const Text(
+                                        'Confirm',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        final deleteDoc = FirebaseFirestore
+                                            .instance
+                                            .collection('player')
+                                            .doc(doc['id']);
+                                        setState(() {
+                                          deleteDoc.delete();
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        icon: Icons.delete,
+                        backgroundColor: Colors.red,
+                      )
+                    ],
                   ),
-                  title: FittedBox(
-                    alignment: Alignment.centerLeft,
-                    fit: BoxFit.scaleDown,
-                    child: Text(doc['name'],
+                  child: Card(
+                      child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text(
+                        doc['position'].toString(),
                         style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 30,
-                        )),
-                  ),
-                  trailing: buildRowIcons(context, doc),
-                )))
+                            color: Colors.black,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      backgroundColor: Colors.lightBlueAccent,
+                    ),
+                    title: FittedBox(
+                      alignment: Alignment.centerLeft,
+                      fit: BoxFit.scaleDown,
+                      child: Text(doc['name'],
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 30,
+                          )),
+                    ),
+                    trailing: buildRowIcons(context, doc),
+                  )),
+                ))
             .toList());
   }
 
@@ -183,7 +296,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
       mainAxisSize: MainAxisSize.min,
       children: [
         buildIconButtonUpdate(context, doc),
-        buildIconButtonDelete(context, doc),
         IconButton(
           onPressed: () {
             showDialog(
@@ -281,54 +393,6 @@ class _PlayersByTeamState extends State<PlayersByTeam> {
     } else {
       checkTeam = false;
     }
-  }
-
-  IconButton buildIconButtonDelete(
-      BuildContext context, DocumentSnapshot<Object?> doc) {
-    return IconButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text(
-                'Are you sure that you want to remove this player from the lineup?',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 25,
-                )),
-            actions: [
-              Row(
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        final updateDoc = FirebaseFirestore.instance
-                            .collection('player')
-                            .doc(doc['id']);
-                        setState(() {
-                          updateDoc.delete();
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Yes',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25,
-                          ))),
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('No',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25,
-                          ))),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-      icon: const Icon(Icons.delete),
-    );
   }
 
   IconButton buildIconButtonUpdate(

@@ -73,8 +73,7 @@ class _MatchesState extends State<Matches> {
                       Expanded(
                           child: ListView(
                               children: documents
-                                  .map((doc) =>
-                                      buildGestureDetector(context, doc))
+                                  .map((doc) => buildCard(context, doc))
                                   .toList())),
                       SizedBox(
                         height: 15,
@@ -111,70 +110,56 @@ class _MatchesState extends State<Matches> {
         ),
       ));
 
-  GestureDetector buildGestureDetector(
-      BuildContext context, DocumentSnapshot<Object?> doc) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Match Result:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      )),
-                  content: Text(
-                      'Winner: ${doc['winner']} \n \nResult: ${doc['result']}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                      )),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 25,
-                            ))),
-                  ],
-                ));
-      },
-      child: Card(
-          color: ((doc['result']) != "No result yet") ? Colors.green : null,
-          child: ListTile(
-            title: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                  '${doc['player1name'].toString()} X ${doc['player2name'].toString()}',
+  Card buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
+    return Card(
+        color: ((doc['result']) != "") ? Colors.green : null,
+        child: ListTile(
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  doc['date'],
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Colors.white60),
+                ),
+                Text(
+                  '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 25,
-                  )),
+                    fontSize: 30,
+                  ),
+                ),
+              ],
             ),
-            subtitle: Text(doc['date'],
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                )),
-            trailing: Visibility(
-              visible: (((currentUser == doc['player1id']) ||
-                          (currentUser == doc['player2id'])) &&
-                      (doc['result'] == 'No result yet'))
-                  ? true
-                  : false,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildIconButtonDate(context, doc),
-                  buildIconButtonResult(context, doc),
-                  buildIconButtonDelete(context, doc),
-                ],
-              ),
+          ),
+          subtitle: Text(
+            '${doc['winner']} ${doc['result']}',
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 17,
             ),
-          )),
-    );
+          ),
+          trailing: Visibility(
+            visible: (((currentUser == doc['player1id']) ||
+                        (currentUser == doc['player2id'])) &&
+                    (doc['result'] == ''))
+                ? true
+                : false,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildIconButtonDate(context, doc),
+                buildIconButtonResult(context, doc),
+                buildIconButtonDelete(context, doc),
+              ],
+            ),
+          ),
+        ));
   }
 
   IconButton buildIconButtonDelete(

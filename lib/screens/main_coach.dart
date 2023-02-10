@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:line_up/handlers/admob_service.dart';
 import 'package:line_up/screens/players_by_team.dart';
-import 'package:line_up/screens/posts.dart';
 
 import '../models/coach.dart';
 import 'new_team.dart';
@@ -18,6 +19,21 @@ class MainCoach extends StatefulWidget {
 
 class _MainCoachState extends State<MainCoach> {
   Coach? coach;
+  BannerAd? banner;
+  @override
+  void initState() {
+    super.initState();
+    createBannerAd();
+  }
+
+  void createBannerAd() {
+    banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnit!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +81,15 @@ class _MainCoachState extends State<MainCoach> {
               );
             }
           }),
+      bottomNavigationBar: banner == null
+          ? Container()
+          : Container(
+              margin: EdgeInsets.all(5),
+              height: 50,
+              child: AdWidget(
+                ad: banner!,
+              ),
+            ),
     );
   }
 
@@ -92,51 +117,51 @@ class _MainCoachState extends State<MainCoach> {
               SlidableAction(
                 onPressed: (context) {
                   showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                            title: const Text(
-                              'Are you sure you want to delete this team?',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 25,
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text(
+                        'Are you sure you want to delete this team?',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 25,
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          children: [
+                            TextButton(
+                              child: const Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              onPressed: () {
+                                final deleteDoc = FirebaseFirestore.instance
+                                    .collection('team')
+                                    .doc(doc['id']);
+                                setState(() {
+                                  deleteDoc.delete();
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
-                            actions: [
-                              Row(
-                                children: [
-                                  TextButton(
-                                    child: const Text(
-                                      'Confirm',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      final deleteDoc = FirebaseFirestore
-                                          .instance
-                                          .collection('team')
-                                          .doc(doc['id']);
-                                      setState(() {
-                                        deleteDoc.delete();
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ));
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 icon: Icons.delete,
                 backgroundColor: Colors.red,
@@ -154,21 +179,6 @@ class _MainCoachState extends State<MainCoach> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  onPressed: () async {
-                    final c = await getCoach();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Posts(
-                          teamId: doc['id'],
-                          userName: c.name,
-                        ),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.post_add),
-                ),
                 IconButton(
                   onPressed: () {
                     buildShowDialog(context, doc);
@@ -226,16 +236,7 @@ class _MainCoachState extends State<MainCoach> {
             ));
   }
 
-  Future<Coach> getCoach() async {
-    final docCoach = FirebaseFirestore.instance
-        .collection("coach")
-        .doc(FirebaseAuth.instance.currentUser!.uid);
-    final snapshot = await docCoach.get();
-    return Coach.fromJson(snapshot.data()!);
-  }
-
   Future<QuerySnapshot<Object?>>? read() async {
-    coach = await getCoach();
     return await FirebaseFirestore.instance
         .collection('team')
         .where('coachId', isEqualTo: coach?.id)

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:line_up/firebase_options.dart';
 import 'package:line_up/handlers/signin_signout.dart';
 import 'package:line_up/handlers/utils.dart';
@@ -14,6 +15,7 @@ Future main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackHandler);
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
