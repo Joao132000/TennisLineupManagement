@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.line_up">
+    package="com.jpcsc.lineUp">
    <application
-        android:label="LineApp"
+        android:label="Tennis LineApp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

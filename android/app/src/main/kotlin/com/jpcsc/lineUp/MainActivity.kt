@@ -1,4 +1,4 @@
-package com.example.line_up
+package com.jpcsc.lineUp
 
 import io.flutter.embedding.android.FlutterActivity
 

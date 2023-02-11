@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:line_up/screens/practice_match_player.dart';
 
+import '../handlers/admob_service.dart';
 import '../handlers/signin_signout.dart';
 import '../models/player.dart';
 
@@ -28,87 +30,114 @@ class _MatchesState extends State<Matches> {
     super.dispose();
   }
 
+  BannerAd? banner;
+  @override
+  void initState() {
+    super.initState();
+    createBannerAd();
+  }
+
+  void createBannerAd() {
+    banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnit!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Team Matches'),
-      ),
-      body: GestureDetector(
-        onPanUpdate: (details) async {
-          if (details.delta.dx < 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PracticeMatchPlayer(
-                  teamId: p!.teamId,
+        appBar: AppBar(
+          title: const Text('Team Matches'),
+        ),
+        body: GestureDetector(
+          onPanUpdate: (details) async {
+            if (details.delta.dx < 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PracticeMatchPlayer(
+                    teamId: p!.teamId,
+                  ),
+                ),
+              );
+            }
+          },
+          child: RefreshIndicator(
+            onRefresh: () {
+              return Future(() {
+                setState(() {});
+              });
+            },
+            child: FutureBuilder<QuerySnapshot>(
+                future: read(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final List<DocumentSnapshot> documents =
+                        snapshot.data!.docs;
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text('Challenge Matches',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            )),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                            child: ListView(
+                                children: documents
+                                    .map((doc) => buildCard(context, doc))
+                                    .toList())),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  'Swipe to see practice matches -->',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Text('Something went wrong!');
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+          ),
+        ),
+        bottomNavigationBar: banner == null
+            ? Container()
+            : Container(
+                margin: EdgeInsets.all(5),
+                height: 50,
+                child: AdWidget(
+                  ad: banner!,
                 ),
               ),
-            );
-          }
-        },
-        child: RefreshIndicator(
-          onRefresh: () {
-            return Future(() {
-              setState(() {});
-            });
-          },
-          child: FutureBuilder<QuerySnapshot>(
-              future: read(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Text('Challenge Matches',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 30,
-                          )),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                          child: ListView(
-                              children: documents
-                                  .map((doc) => buildCard(context, doc))
-                                  .toList())),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Text(
-                                'Swipe to see practice matches -->',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                        ],
-                      )
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return const Text('Something went wrong!');
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-        ),
-      ));
+      );
 
   Card buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {
     return Card(

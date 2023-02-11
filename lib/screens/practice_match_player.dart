@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../handlers/admob_service.dart';
 
 class PracticeMatchPlayer extends StatefulWidget {
   const PracticeMatchPlayer({Key? key, required this.teamId}) : super(key: key);
@@ -16,6 +19,21 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
     "Singles",
     "Doubles",
   ];
+  BannerAd? banner;
+  @override
+  void initState() {
+    super.initState();
+    createBannerAd();
+  }
+
+  void createBannerAd() {
+    banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnit!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -119,6 +137,15 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
                 }),
           ),
         ),
+        bottomNavigationBar: banner == null
+            ? Container()
+            : Container(
+                margin: EdgeInsets.all(5),
+                height: 50,
+                child: AdWidget(
+                  ad: banner!,
+                ),
+              ),
       );
 
   Card buildCard(BuildContext context, DocumentSnapshot<Object?> doc) {

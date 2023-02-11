@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_up/handlers/utils.dart';
 import 'package:line_up/screens/doubles_player_view.dart';
+import 'package:line_up/screens/intro_player.dart';
 import 'package:line_up/screens/posts.dart';
 
+import '../handlers/admob_service.dart';
 import '../handlers/signin_signout.dart';
 import '../models/match.dart';
 import '../models/player.dart';
@@ -28,6 +32,7 @@ class _MainPlayerState extends State<MainPlayer> {
   Player? p;
   final newTeamCodeController = TextEditingController();
   bool checkTeam = false;
+  Random random = new Random();
 
   Future checkTeamFunc() async {
     if (newTeamCodeController.text != "") {
@@ -46,6 +51,37 @@ class _MainPlayerState extends State<MainPlayer> {
   }
 
   @override
+  void initState() {
+    createInterstitialAd();
+    super.initState();
+  }
+
+  InterstitialAd? interstitialAd;
+  void createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdMobService.interstitialAdUnit!,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) => interstitialAd = ad,
+          onAdFailedToLoad: (LoadAdError error) => interstitialAd = null,
+        ));
+  }
+
+  void showInterstitialAd() {
+    if (interstitialAd != null) {
+      interstitialAd!.fullScreenContentCallback =
+          FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        createInterstitialAd();
+      }, onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        createInterstitialAd();
+      });
+      interstitialAd!.show();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: Text(
@@ -58,6 +94,20 @@ class _MainPlayerState extends State<MainPlayer> {
         actions: [
           Row(
             children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => IntroPlayer(),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.lightbulb,
+                  size: 30,
+                ),
+              ),
               IconButton(
                 onPressed: () async {
                   await getPlayer();
@@ -314,6 +364,10 @@ class _MainPlayerState extends State<MainPlayer> {
                                   // foreground
                                 ),
                                 onPressed: () {
+                                  final int randomNumberAd = random.nextInt(3);
+                                  if (randomNumberAd == 0) {
+                                    showInterstitialAd();
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -338,13 +392,18 @@ class _MainPlayerState extends State<MainPlayer> {
                                   // foreground
                                 ),
                                 onPressed: () async {
+                                  final int randomNumberAd = random.nextInt(3);
+                                  if (randomNumberAd == 0) {
+                                    showInterstitialAd();
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Posts(
-                                              teamId: p?.teamId,
-                                              userName: p?.name,
-                                            )),
+                                      builder: (context) => Posts(
+                                        teamId: p?.teamId,
+                                        userName: p?.name,
+                                      ),
+                                    ),
                                   );
                                 },
                                 child: const Text(

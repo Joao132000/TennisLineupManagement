@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:line_up/handlers/signin_signout.dart';
 import 'package:line_up/handlers/utils.dart';
 
+import '../handlers/admob_service.dart';
 import '../models/team.dart';
 
 class NewTeam extends StatefulWidget {
@@ -48,6 +50,21 @@ class _NewTeamState extends State<NewTeam> {
     "Women's Senior",
     'Overall',
   ];
+  BannerAd? banner;
+  @override
+  void initState() {
+    super.initState();
+    createBannerAd();
+  }
+
+  void createBannerAd() {
+    banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnit!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -152,6 +169,15 @@ class _NewTeamState extends State<NewTeam> {
             ],
           ),
         ),
+        bottomNavigationBar: banner == null
+            ? Container()
+            : Container(
+                margin: EdgeInsets.all(5),
+                height: 50,
+                child: AdWidget(
+                  ad: banner!,
+                ),
+              ),
       );
 
   Future saveTeam() async {

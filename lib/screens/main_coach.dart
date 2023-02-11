@@ -69,7 +69,7 @@ class _MainCoachState extends State<MainCoach> {
                   ),
                   const NewTeamButton(),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                 ],
               );
@@ -236,7 +236,16 @@ class _MainCoachState extends State<MainCoach> {
             ));
   }
 
+  Future<Coach> getCoach() async {
+    final docCoach = FirebaseFirestore.instance
+        .collection("coach")
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshot = await docCoach.get();
+    return Coach.fromJson(snapshot.data()!);
+  }
+
   Future<QuerySnapshot<Object?>>? read() async {
+    coach = await getCoach();
     return await FirebaseFirestore.instance
         .collection('team')
         .where('coachId', isEqualTo: coach?.id)
@@ -255,7 +264,7 @@ class NewTeamButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(
-          height: 70,
+          height: 5,
         ),
         const SizedBox(
           width: 190,
