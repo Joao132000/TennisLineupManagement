@@ -51,19 +51,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAzT-C4JypIOh8lQL1IsUWXN3OMf1x-_uE',
-    appId: '1:321283554315:android:c09912fda806d3f74c1b0e',
+    appId: '1:321283554315:android:c66126a947210b4a4c1b0e',
     messagingSenderId: '321283554315',
     projectId: 'line-up-d10b8',
     storageBucket: 'line-up-d10b8.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBUCJ5FNi_OOu3l48EEJOKbJNS0huOZxAg',
-    appId: '1:321283554315:ios:a35abbda3fdabcf64c1b0e',
+    apiKey: 'AIzaSyAzT-C4JypIOh8lQL1IsUWXN3OMf1x-_uE',
+    appId: '1:321283554315:ios:71f7ecbd88a572a04c1b0e',
     messagingSenderId: '321283554315',
     projectId: 'line-up-d10b8',
     storageBucket: 'line-up-d10b8.appspot.com',
-    iosClientId: '321283554315-v9ctib2laanbsnu4oo4mptm9o7ej6qlu.apps.googleusercontent.com',
+    iosClientId:
+        '321283554315-v9ctib2laanbsnu4oo4mptm9o7ej6qlu.apps.googleusercontent.com',
     iosBundleId: 'com.example.lineUp',
   );
 }
