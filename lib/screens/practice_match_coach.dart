@@ -581,14 +581,14 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                       doc['date'],
                       style: const TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: 15,
+                          fontSize: 12,
                           color: Colors.white60),
                     ),
                     Text(
                       '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 30,
+                        fontSize: 20,
                       ),
                     ),
                   ],
@@ -600,15 +600,26 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                       doc['date'],
                       style: const TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: 15,
+                          fontSize: 12,
                           color: Colors.white60),
                     ),
-                    Text(
-                      '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30,
-                      ),
+                    Column(
+                      children: [
+                        Text(
+                          '${doc['player1name'].toString()} x',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(
+                          '${doc['player2name'].toString()}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -616,7 +627,7 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
             '${doc['winner']} ${doc['result']}',
             style: const TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 17,
+              fontSize: 15,
             ),
           ),
           trailing: Row(

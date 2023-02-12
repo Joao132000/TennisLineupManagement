@@ -5,11 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../handlers/admob_service.dart';
 import '../models/post.dart';
 import '../models/team.dart';
 
@@ -26,22 +24,7 @@ class Posts extends StatefulWidget {
 class _PostsState extends State<Posts> {
   final descriptionController = TextEditingController();
   String messageForNotification = '';
-  BannerAd? banner;
   ScrollController _scrollController = ScrollController();
-  @override
-  void initState() {
-    super.initState();
-    createBannerAd();
-  }
-
-  void createBannerAd() {
-    banner = BannerAd(
-      size: AdSize.fullBanner,
-      adUnitId: AdMobService.bannerAdUnit!,
-      listener: AdMobService.bannerListener,
-      request: const AdRequest(),
-    )..load();
-  }
 
   @override
   void dispose() {

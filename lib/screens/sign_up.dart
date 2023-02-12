@@ -7,6 +7,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_up/handlers/utils.dart';
 import 'package:line_up/models/coach.dart';
+import 'package:line_up/screens/intro_coach.dart';
+import 'package:line_up/screens/intro_player.dart';
 
 import '../models/player.dart';
 
@@ -89,7 +91,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
             const Text(
-              'Would you like to register as a player or coach/admin?',
+              'Would you like to register as a player or coach',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -108,7 +110,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   Text(
-                    'Coach/Admin',
+                    'Coach',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -128,7 +130,8 @@ class _SignUpState extends State<SignUp> {
               child: TextField(
                 controller: teamIdController,
                 textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(labelText: 'Team Code'),
+                decoration: const InputDecoration(
+                    labelText: 'Team code provided by coach'),
               ),
             ),
             const SizedBox(height: 20),
@@ -168,6 +171,21 @@ class _SignUpState extends State<SignUp> {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController1.text.trim());
+    if (FirebaseAuth.instance.currentUser!.displayName == '2') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => IntroPlayer(),
+        ),
+      );
+    } else if (FirebaseAuth.instance.currentUser!.displayName == '1') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => IntroCoach(),
+        ),
+      );
+    }
   }
 
   void wait() {

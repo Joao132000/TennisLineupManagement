@@ -8,6 +8,7 @@ import 'package:line_up/handlers/admob_service.dart';
 import 'package:line_up/screens/players_by_team.dart';
 
 import '../models/coach.dart';
+import 'intro_coach.dart';
 import 'new_team.dart';
 
 class MainCoach extends StatefulWidget {
@@ -42,6 +43,20 @@ class _MainCoachState extends State<MainCoach> {
         title: Text('Teams'),
         automaticallyImplyLeading: false,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => IntroCoach(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.lightbulb,
+              size: 30,
+            ),
+          ),
           IconButton(
             onPressed: () => FirebaseAuth.instance.signOut(),
             icon: const Icon(

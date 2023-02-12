@@ -2,17 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
-class IntroPlayer extends StatefulWidget {
+class IntroCoach extends StatefulWidget {
   @override
-  State<IntroPlayer> createState() => _IntroPlayerState();
+  State<IntroCoach> createState() => _IntroCoachState();
 }
 
-class _IntroPlayerState extends State<IntroPlayer> {
+class _IntroCoachState extends State<IntroCoach> {
   // 1. Define a `GlobalKey` as part of the parent widget's state
 
   @override
   Widget build(BuildContext context) {
     return IntroductionScreen(
+      dotsFlex: 2,
       // 2. Pass that key to the `IntroductionScreen` `key` param
       pages: [
         PageViewModel(
@@ -73,7 +74,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 height: 35,
               ),
               Text(
-                'Lineup and Challenge',
+                'Teams and Players',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -89,9 +90,10 @@ class _IntroPlayerState extends State<IntroPlayer> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Your starting position will be '0'. "
-                "Once your coach assign you a position, you can challenge another player by "
-                "tapping the green racquet in front of their name.",
+                "Create a new team by clicking the button 'New Team'. "
+                "After team is created you will be able to see "
+                "the new team in the main screen. Then you can copy and send the team code"
+                " to your players, so they can enroll in your team.",
                 style: TextStyle(
                   fontSize: 15,
                 ),
@@ -101,30 +103,18 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 height: 10,
               ),
               Image.asset(
-                'assets/images/challenge.png',
-                width: 100,
-                height: 100,
+                'assets/images/team_card.png',
+                width: 130,
+                height: 130,
                 alignment: Alignment.center,
               ),
               SizedBox(
                 height: 10,
               ),
-              Text(
-                "A match will be created and you can see it by clicking the button 'Team Matches'. "
-                "You can set a time for the match, remove match, "
-                "or add match result. Once completed match can't be edited",
-                style: TextStyle(
-                  fontSize: 15,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 10,
-              ),
               Image.asset(
-                'assets/images/match_card.png',
-                width: 80,
-                height: 80,
+                'assets/images/team_code.png',
+                width: 110,
+                height: 110,
                 alignment: Alignment.center,
               ),
             ],
@@ -137,7 +127,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 height: 35,
               ),
               Text(
-                'Doubles and Practice Matches',
+                'Lineup: Singles and Doubles',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -153,8 +143,10 @@ class _IntroPlayerState extends State<IntroPlayer> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Your coach can add doubles teams, to see them just swipe right. However, challenges "
-                "are not allowed for doubles, there are only practice matches for doubles.",
+                "Navigate to a team by tapping on the team card. New players will have position '0' until you "
+                "set a position. The coach can update the lineup anytime. By swiping right "
+                "you can manage doubles, to add a new double just hit 'Add Doubles Team' at the bottom "
+                "of the screen.",
                 style: TextStyle(
                   fontSize: 15,
                 ),
@@ -163,22 +155,65 @@ class _IntroPlayerState extends State<IntroPlayer> {
               SizedBox(
                 height: 10,
               ),
+              Image.asset(
+                'assets/images/lineup_coach.png',
+                width: 140,
+                height: 140,
+                alignment: Alignment.center,
+              ),
+            ],
+          ),
+        ),
+        PageViewModel(
+          titleWidget: Column(
+            children: [
+              SizedBox(
+                height: 35,
+              ),
               Text(
-                "Coach can also add practice matches for singles and doubles. You can see "
-                "practice matches for your team by swiping right in the matches pages.",
+                'Matches: Challenge and Practice',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+          bodyWidget: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "Players can challenge each other, whenever a player challenges another player "
+                "a match will be created, and you can see it by clicking at 'Team Matches'",
                 style: TextStyle(
                   fontSize: 15,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Image.asset(
-                'assets/images/singles_practice.png',
-                width: 160,
-                height: 160,
+                'assets/images/challenge_matches.png',
+                width: 140,
+                height: 140,
                 alignment: Alignment.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "In addition, coach can also add practice matches. Go to practice matches by "
+                "swiping right on the challenge matches screen. "
+                "Players will be able to see the practice matches, but they can't edit it",
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -281,7 +316,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
       },
       baseBtnStyle: TextButton.styleFrom(
         backgroundColor: Colors.black12,
-        minimumSize: Size(20, 20),
+        minimumSize: Size(40, 40),
       ),
       skipStyle: TextButton.styleFrom(
           foregroundColor: Colors.red, textStyle: TextStyle(fontSize: 25)),

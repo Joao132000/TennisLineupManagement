@@ -153,14 +153,14 @@ class _MatchesState extends State<Matches> {
                   doc['date'],
                   style: const TextStyle(
                       fontWeight: FontWeight.w400,
-                      fontSize: 15,
+                      fontSize: 12,
                       color: Colors.white60),
                 ),
                 Text(
-                  '${doc['player1name'].toString()} x ${doc['player2name'].toString()}',
+                  '${doc['player1name'].toString()} x\n${doc['player2name'].toString()}',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 30,
+                    fontSize: 20,
                   ),
                 ),
               ],
@@ -170,7 +170,7 @@ class _MatchesState extends State<Matches> {
             '${doc['winner']} ${doc['result']}',
             style: const TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 17,
+              fontSize: 15,
             ),
           ),
           trailing: Visibility(
