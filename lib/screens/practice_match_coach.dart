@@ -248,23 +248,28 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                             Row(
                                               children: [
                                                 TextButton(
-                                                  onPressed: () {
-                                                    if ((selectedPlayer2 !=
-                                                            null) &&
-                                                        (selectedPlayer1 !=
-                                                            null)) {
-                                                      check = 'Singles';
-                                                      formattedDate = DateFormat(
-                                                              'M/dd/yyyy - kk:mm')
-                                                          .format(
-                                                              Timestamp.now()
+                                                  onPressed: ((selectedPlayer1 !=
+                                                              selectedPlayer2) &&
+                                                          (selectedPlayer2 !=
+                                                              null) &&
+                                                          (selectedPlayer1 !=
+                                                              null))
+                                                      ? () {
+                                                          check = 'Singles';
+                                                          formattedDate = DateFormat(
+                                                                  'M/dd/yyyy - kk:mm')
+                                                              .format(Timestamp
+                                                                      .now()
                                                                   .toDate());
-                                                      saveMatch();
-                                                      Navigator.pop(context);
-                                                      selectedPlayer1 = null;
-                                                      selectedPlayer2 = null;
-                                                    }
-                                                  },
+                                                          saveMatch();
+                                                          Navigator.pop(
+                                                              context);
+                                                          selectedPlayer1 =
+                                                              null;
+                                                          selectedPlayer2 =
+                                                              null;
+                                                        }
+                                                      : null,
                                                   child: const Text(
                                                     'Confirm',
                                                     style: TextStyle(
@@ -432,23 +437,28 @@ class _PracticeMatchCoachState extends State<PracticeMatchCoach> {
                                             Row(
                                               children: [
                                                 TextButton(
-                                                  onPressed: () {
-                                                    if ((selectedPlayer2 !=
-                                                            null) &&
-                                                        (selectedPlayer1 !=
-                                                            null)) {
-                                                      check = 'Doubles';
-                                                      formattedDate = DateFormat(
-                                                              'M/dd/yyyy - kk:mm')
-                                                          .format(
-                                                              Timestamp.now()
+                                                  onPressed: ((selectedPlayer1 !=
+                                                              selectedPlayer2) &&
+                                                          (selectedPlayer2 !=
+                                                              null) &&
+                                                          (selectedPlayer1 !=
+                                                              null))
+                                                      ? () {
+                                                          check = 'Doubles';
+                                                          formattedDate = DateFormat(
+                                                                  'M/dd/yyyy - kk:mm')
+                                                              .format(Timestamp
+                                                                      .now()
                                                                   .toDate());
-                                                      saveMatch();
-                                                      Navigator.pop(context);
-                                                      selectedPlayer1 = null;
-                                                      selectedPlayer2 = null;
-                                                    }
-                                                  },
+                                                          saveMatch();
+                                                          Navigator.pop(
+                                                              context);
+                                                          selectedPlayer1 =
+                                                              null;
+                                                          selectedPlayer2 =
+                                                              null;
+                                                        }
+                                                      : null,
                                                   child: const Text(
                                                     'Confirm',
                                                     style: TextStyle(

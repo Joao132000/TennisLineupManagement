@@ -296,30 +296,88 @@ class _MainPlayerState extends State<MainPlayer> {
                                                       challengePosition) &&
                                                   (challengePositionCheck >
                                                       0)) {
-                                                final playerChallenged =
-                                                    FirebaseFirestore.instance
-                                                        .collection('player')
-                                                        .doc(doc['id']);
-                                                final playerChallenging =
-                                                    FirebaseFirestore.instance
-                                                        .collection('player')
-                                                        .doc(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid);
-                                                setState(() {
-                                                  playerChallenging.update({
-                                                    'challenge': true,
-                                                  });
-                                                  playerChallenged.update({
-                                                    'challenge': true,
-                                                  });
-                                                });
-                                                saveMatch(
-                                                    doc['id'],
-                                                    doc['name'],
-                                                    doc['position']);
-                                                sendPushMessage(doc['token']);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: Text(
+                                                      'Are you sure you want to challenge ${doc['name']}?',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 25,
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      Row(
+                                                        children: [
+                                                          TextButton(
+                                                            child: const Text(
+                                                              'Confirm',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              final playerChallenged =
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'player')
+                                                                      .doc(doc[
+                                                                          'id']);
+                                                              final playerChallenging = FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'player')
+                                                                  .doc(FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid);
+                                                              setState(() {
+                                                                playerChallenging
+                                                                    .update({
+                                                                  'challenge':
+                                                                      true,
+                                                                });
+                                                                playerChallenged
+                                                                    .update({
+                                                                  'challenge':
+                                                                      true,
+                                                                });
+                                                              });
+                                                              saveMatch(
+                                                                  doc['id'],
+                                                                  doc['name'],
+                                                                  doc['position']);
+                                                              sendPushMessage(
+                                                                  doc['token']);
+                                                            },
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
                                               } else {
                                                 Utils.showSnackBar(
                                                     'You can only challenge players ${challengePosition} position(s) above you');

@@ -8,18 +8,15 @@ class IntroPlayer extends StatefulWidget {
 }
 
 class _IntroPlayerState extends State<IntroPlayer> {
-  // 1. Define a `GlobalKey` as part of the parent widget's state
-
   @override
   Widget build(BuildContext context) {
     return IntroductionScreen(
-      // 2. Pass that key to the `IntroductionScreen` `key` param
       pages: [
         PageViewModel(
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Welcome to Tennis LineApp!',
@@ -70,7 +67,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Lineup and Challenge',
@@ -95,36 +92,34 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
               ),
               Image.asset(
                 'assets/images/challenge.png',
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 alignment: Alignment.center,
               ),
               SizedBox(
-                height: 10,
+                height: 15,
               ),
               Text(
                 "A match will be created and you can see it by clicking the button 'Team Matches'. "
                 "You can set a time for the match, remove match, "
-                "or add match result. Once completed match can't be edited",
+                "and add match result. Once completed match can't be edited",
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
               ),
               Image.asset(
                 'assets/images/match_card.png',
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 alignment: Alignment.center,
               ),
             ],
@@ -134,7 +129,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Doubles and Practice Matches',
@@ -158,26 +153,24 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
               ),
               Text(
                 "Coach can also add practice matches for singles and doubles. You can see "
-                "practice matches for your team by swiping right in the matches pages.",
+                "practice matches for your team by swiping right in the matches screen.",
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 20,
               ),
               Image.asset(
                 'assets/images/singles_practice.png',
-                width: 160,
-                height: 160,
+                width: 180,
+                height: 180,
                 alignment: Alignment.center,
               ),
             ],
@@ -187,7 +180,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Posts',
@@ -211,15 +204,14 @@ class _IntroPlayerState extends State<IntroPlayer> {
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
               ),
               Image.asset(
                 'assets/images/posts.png',
-                width: 310,
-                height: 310,
+                width: 400,
+                height: 400,
                 alignment: Alignment.center,
               ),
             ],
@@ -229,7 +221,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 30,
+                height: 45,
               ),
               Text(
                 'You are ready to start using Tennis LineApp!',
@@ -253,8 +245,8 @@ class _IntroPlayerState extends State<IntroPlayer> {
               Image.asset(
                 'assets/images/legends.webp',
                 //color: Colors.white,
-                width: 180,
-                height: 180,
+                width: 200,
+                height: 200,
                 alignment: Alignment.center,
               ),
               SizedBox(
@@ -271,6 +263,7 @@ class _IntroPlayerState extends State<IntroPlayer> {
           ),
         ),
       ],
+      controlsMargin: EdgeInsets.only(bottom: 15),
       showSkipButton: true,
       skip: const Text("Skip"),
       next: const Text("Next"),

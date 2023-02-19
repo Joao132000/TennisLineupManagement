@@ -89,8 +89,8 @@ class _NewTeamState extends State<NewTeam> {
               TextField(
                 controller: schoolController,
                 textInputAction: TextInputAction.next,
-                decoration:
-                    const InputDecoration(labelText: 'School/Organization'),
+                decoration: const InputDecoration(
+                    labelText: 'School/Organization Name'),
               ),
               const SizedBox(height: 5),
               TextField(
@@ -101,6 +101,7 @@ class _NewTeamState extends State<NewTeam> {
               const SizedBox(height: 10),
               Row(
                 children: [
+                  Text('Team category:   '),
                   DropdownButton(
                     menuMaxHeight: 200,
                     alignment: AlignmentDirectional.bottomStart,
@@ -119,7 +120,11 @@ class _NewTeamState extends State<NewTeam> {
                       });
                     },
                   ),
-                  Text('  Challenge Positions:   '),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Positions above allowed to challenge:    '),
                   DropdownButton(
                     menuMaxHeight: 200,
                     alignment: AlignmentDirectional.centerEnd,
@@ -172,7 +177,7 @@ class _NewTeamState extends State<NewTeam> {
         bottomNavigationBar: banner == null
             ? Container()
             : Container(
-                margin: EdgeInsets.all(5),
+                margin: EdgeInsets.only(bottom: 2),
                 height: 50,
                 child: AdWidget(
                   ad: banner!,

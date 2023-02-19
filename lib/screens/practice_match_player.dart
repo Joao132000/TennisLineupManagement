@@ -140,7 +140,7 @@ class _PracticeMatchPlayerState extends State<PracticeMatchPlayer> {
         bottomNavigationBar: banner == null
             ? Container()
             : Container(
-                margin: EdgeInsets.all(5),
+                margin: EdgeInsets.only(bottom: 2),
                 height: 50,
                 child: AdWidget(
                   ad: banner!,

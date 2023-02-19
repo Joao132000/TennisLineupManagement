@@ -91,7 +91,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
             const Text(
-              'Would you like to register as a player or coach',
+              'Would you like to register as a player or coach?',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,

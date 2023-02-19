@@ -221,15 +221,35 @@ class _TeamDoublesState extends State<TeamDoubles> {
                                       Row(
                                         children: [
                                           TextButton(
-                                            onPressed: () {
-                                              if ((positionController.text !=
-                                                      '') &&
-                                                  (selectedPlayer2 != null) &&
-                                                  (selectedPlayer1 != null)) {
-                                                saveDouble();
-                                                Navigator.pop(context);
-                                              }
-                                            },
+                                            onPressed: ((selectedPlayer1 !=
+                                                        selectedPlayer2) &&
+                                                    (selectedPlayer2 != null) &&
+                                                    (selectedPlayer1 != null))
+                                                ? () {
+                                                    if (positionController
+                                                            .text !=
+                                                        '') {
+                                                      saveDouble();
+                                                      Navigator.pop(context);
+                                                      selectedPlayer2 = null;
+                                                      selectedPlayer1 = null;
+                                                      positionController.text =
+                                                          '';
+                                                    } else {
+                                                      showDialog(
+                                                        context: (context),
+                                                        builder: (context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                              'Please enter position'),
+                                                          titlePadding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                        ),
+                                                      );
+                                                    }
+                                                  }
+                                                : null,
                                             child: const Text(
                                               'Confirm',
                                               style: TextStyle(
@@ -239,8 +259,12 @@ class _TeamDoublesState extends State<TeamDoubles> {
                                             ),
                                           ),
                                           TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              selectedPlayer2 = null;
+                                              selectedPlayer1 = null;
+                                              positionController.text = '';
+                                            },
                                             child: const Text(
                                               'Cancel',
                                               style: TextStyle(

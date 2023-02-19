@@ -226,6 +226,9 @@ class _PostsState extends State<Posts> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 7,
+                  )
                 ],
               ),
             ),

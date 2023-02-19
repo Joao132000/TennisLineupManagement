@@ -20,7 +20,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Welcome to Tennis LineApp!',
@@ -71,7 +71,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Teams and Players',
@@ -90,14 +90,10 @@ class _IntroCoachState extends State<IntroCoach> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Create a new team by clicking the button 'New Team'. "
-                "After team is created you will be able to see "
-                "the new team in the main screen. Then you can copy and send the team code"
-                " to your players, so they can enroll in your team.",
+                "Create a new team by clicking the button 'New Team' on the bottom of the main screen. ",
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
@@ -108,13 +104,21 @@ class _IntroCoachState extends State<IntroCoach> {
                 height: 130,
                 alignment: Alignment.center,
               ),
+              Text(
+                "After team is created you will be able to see "
+                "the new team in the main screen(like the one above). Then, you can copy and send the team code"
+                " to your players, so they can enroll in your team.",
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
               SizedBox(
-                height: 10,
+                height: 30,
               ),
               Image.asset(
                 'assets/images/team_code.png',
-                width: 110,
-                height: 110,
+                width: 170,
+                height: 170,
                 alignment: Alignment.center,
               ),
             ],
@@ -124,7 +128,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Lineup: Singles and Doubles',
@@ -143,14 +147,11 @@ class _IntroCoachState extends State<IntroCoach> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Navigate to a team by tapping on the team card. New players will have position '0' until you "
-                "set a position. The coach can update the lineup anytime. By swiping right "
-                "you can manage doubles, to add a new double just hit 'Add Doubles Team' at the bottom "
-                "of the screen.",
+                "Navigate to a team by tapping on the team card on the main screen. New players will have position '0' until you "
+                "set a position. The coach can update the lineup anytime. ",
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
@@ -161,6 +162,17 @@ class _IntroCoachState extends State<IntroCoach> {
                 height: 140,
                 alignment: Alignment.center,
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "By swiping right "
+                "you can manage doubles, to add a new double just hit 'Add Doubles Team' at the bottom "
+                "of the screen.",
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
             ],
           ),
         ),
@@ -168,7 +180,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Matches: Challenge and Practice',
@@ -192,7 +204,6 @@ class _IntroCoachState extends State<IntroCoach> {
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
@@ -207,13 +218,12 @@ class _IntroCoachState extends State<IntroCoach> {
                 height: 10,
               ),
               Text(
-                "In addition, coach can also add practice matches. Go to practice matches by "
+                "In addition, the coach can also add practice matches. Navigate to practice matches screen by "
                 "swiping right on the challenge matches screen. "
-                "Players will be able to see the practice matches, but they can't edit it",
+                "Players in that team will be able to see the practice matches, but they can't edit it",
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -222,7 +232,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 35,
+                height: 45,
               ),
               Text(
                 'Posts',
@@ -246,15 +256,14 @@ class _IntroCoachState extends State<IntroCoach> {
                 style: TextStyle(
                   fontSize: 15,
                 ),
-                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
               ),
               Image.asset(
                 'assets/images/posts.png',
-                width: 310,
-                height: 310,
+                width: 400,
+                height: 400,
                 alignment: Alignment.center,
               ),
             ],
@@ -264,7 +273,7 @@ class _IntroCoachState extends State<IntroCoach> {
           titleWidget: Column(
             children: [
               SizedBox(
-                height: 30,
+                height: 45,
               ),
               Text(
                 'You are ready to start using Tennis LineApp!',
@@ -288,8 +297,8 @@ class _IntroCoachState extends State<IntroCoach> {
               Image.asset(
                 'assets/images/legends.webp',
                 //color: Colors.white,
-                width: 180,
-                height: 180,
+                width: 200,
+                height: 200,
                 alignment: Alignment.center,
               ),
               SizedBox(
@@ -306,6 +315,7 @@ class _IntroCoachState extends State<IntroCoach> {
           ),
         ),
       ],
+      controlsMargin: EdgeInsets.only(bottom: 15),
       showSkipButton: true,
       skip: const Text("Skip"),
       next: const Text("Next"),
